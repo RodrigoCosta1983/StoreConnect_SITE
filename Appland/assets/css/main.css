@@ -739,6 +739,10 @@ section,
   position: relative;
 }
 
+.img-rounded {
+  border-radius: 16px; /* ajuste o valor como quiser */
+}
+
 .section-title h2 {
   font-size: 32px;
   font-weight: 700;
