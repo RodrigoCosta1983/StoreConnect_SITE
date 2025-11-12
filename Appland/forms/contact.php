@@ -1,41 +1,56 @@
 <?php
-  /**
-  * Requires the "PHP Email Form" library
-  * The "PHP Email Form" library is available only in the pro version of the template
-  * The library should be uploaded to: vendor/php-email-form/php-email-form.php
-  * For more info and help: https://bootstrapmade.com/php-email-form/
-  */
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-  // Replace contact@example.com with your real receiving email address
-  $receiving_email_address = 'contato.rodrigocosta.dev@gmail.com';
+require __DIR__ . '/../assets/vendor/php-email-form/PHPMailer.php';
+require __DIR__ . '/../assets/vendor/src/Exception.php';
+require __DIR__ . '/../assets/vendor/src/SMTP.php';
+;
 
-  if( file_exists($php_email_form = '../assets/vendor/php-email-form/php-email-form.php' )) {
-    include( $php_email_form );
-  } else {
-    die( 'Unable to load the "PHP Email Form" Library!');
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  $name = htmlspecialchars($_POST['name']);
+  $email = htmlspecialchars($_POST['email']);
+  $subject = htmlspecialchars($_POST['subject']);
+  $message = htmlspecialchars($_POST['message']);
+
+  $mail = new PHPMailer(true);
+
+  try {
+    // Configuração do servidor Gmail
+    $mail->isSMTP();
+    $mail->Host       = 'smtp.gmail.com';
+    $mail->SMTPAuth   = true;
+    $mail->Username   = 'contato.rodrigocosta.dev@gmail.com'; // seu Gmail
+    $mail->Password   = 'SUA_SENHA_DE_APP_AQUI'; // senha de app do Gmail
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port       = 587;
+
+    // Remetente e destinatário
+    $mail->setFrom('contato.rodrigocosta.dev@gmail.com', 'StoreConnect Site');
+    $mail->addAddress('contato.rodrigocosta.dev@gmail.com', 'Rodrigo Costa');
+    $mail->addReplyTo($email, $name); // permite responder direto ao remetente
+
+    // Conteúdo do e-mail
+    $mail->isHTML(true);
+    $mail->Subject = "Nova mensagem de contato: $subject";
+    $mail->Body    = "
+      <h2>Nova mensagem do site Store&Connect</h2>
+      <p><strong>Nome:</strong> $name</p>
+      <p><strong>E-mail:</strong> $email</p>
+      <p><strong>Assunto:</strong> $subject</p>
+      <p><strong>Mensagem:</strong><br>$message</p>
+      <hr>
+      <p style='font-size:12px;color:#666;'>Enviado automaticamente via formulário do site Store&Connect.</p>
+    ";
+
+    $mail->AltBody = "Nova mensagem de $name <$email>\n\nAssunto: $subject\n\n$message";
+
+    // Envia o e-mail
+    $mail->send();
+    echo 'OK';
+  } catch (Exception $e) {
+    echo "Erro ao enviar: {$mail->ErrorInfo}";
   }
-
-  $contact = new PHP_Email_Form;
-  $contact->ajax = true;
-  
-  $contact->to = $receiving_email_address;
-  $contact->from_name = $_POST['name'];
-  $contact->from_email = $_POST['email'];
-  $contact->subject = $_POST['subject'];
-
-  // Uncomment below code if you want to use SMTP to send emails. You need to enter your correct SMTP credentials
-  
-  $contact->smtp = array(
-    'host' => 'contato.rodrigocosta.dev@gmail.com',
-    'username' => 'contato.rodrigocosta.dev@gmail.com',
-    'password' => 'Sophie#1983',
-    'port' => '587'
-  );
-  
-
-  $contact->add_message( $_POST['name'], 'Para');
-  $contact->add_message( $_POST['email'], 'E-mail');
-  $contact->add_message( $_POST['message'], 'Mensagem', 10);
-
-  echo $contact->send();
-?>
+} else {
+  echo "Método inválido.";
+}
