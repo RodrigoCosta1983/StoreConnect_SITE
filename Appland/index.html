@@ -896,6 +896,53 @@
   <!-- Preloader -->
   <div id="preloader"></div>
 
+
+  <script>
+//var url = 'https://cdn.waplus.io/waplus-crm/settings/ossembed.js';
+var s = document.createElement('script');
+s.type = 'text/javascript';
+s.async = true;
+//s.src = url;
+s.src = 'assets/js/ossembed.js';
+var options = {
+"enabled": true,
+"chatButtonSetting": {
+"backgroundColor": "#16BE45",
+//"ctaText": "Envie-nos uma mensagem",
+"ctaText": "",
+"borderRadius": "8",
+"marginLeft": "20",
+"marginBottom": "100",
+"marginRight": "20",
+"position": "right",
+"textColor": "#ffffff",
+"phoneNumber": "5521985050120",
+"messageText": "👋🏻Olá",
+"trackClick": true
+},
+"brandSetting": {
+"brandName": "Store&Connect",
+"brandSubTitle": "Respostas em até 1 dia  \"Store&Connect\"",
+"headerTextColor": "#fff",
+"brandImg": "https://rodrigocosta1983.github.io/StoreConnect_SITE/Appland/assets/img/apple-touch-icon.png",
+"welcomeText": "Oi! Em que posso ajudar?",
+"messageText": "Olá, gostaria de tirar algumas dúvidas ",
+"backgroundColor": "#0a5f54",
+"ctaText": "Start Chat",
+"borderRadius": "20",
+"autoShow": false,
+"btnColor": "#16BE45",
+"phoneNumber": "5521985050120",
+"trackClick": true
+}
+}
+s.onload = function() {
+CreateWhatsappChatWidget(options);
+};
+var x = document.getElementsByTagName('script')[0];
+x.parentNode.insertBefore(s, x);
+</script>
+
   <!-- Vendor JS Files -->
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script>
@@ -1049,6 +1096,8 @@
 
   })();
 </script>
+
+
 
 </body>
 </html>
