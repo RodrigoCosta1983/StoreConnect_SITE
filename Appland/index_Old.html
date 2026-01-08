@@ -956,4 +956,154 @@ x.parentNode.insertBefore(s, x);
   <script src="assets/js/main.js"></script>
 
 
-  
+  <!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pop-up — 30 dias grátis</title>
+  <style>
+    :root{
+      --bg: #0b1220;
+      --card: #ffffff;
+      --accent: #2f89fc; /* sua cor */
+      --muted: #6b7280;
+      --radius: 12px;
+      --shadow: 0 10px 30px rgba(11,18,32,0.45);
+      --maxw: 420px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    /* overlay */
+    .modal-overlay{
+      position: fixed; inset: 0; display: grid; place-items: center; z-index: 9999;
+      background: linear-gradient(180deg, rgba(2,6,23,0.48), rgba(2,6,23,0.72));
+      padding: 24px;
+      animation: fadeIn .18s ease;
+    }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    /* card */
+    .modal-card{ background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); width: 100%; max-width: var(--maxw); padding: 22px; box-sizing: border-box; }
+
+    .modal-head{ display:flex; gap:12px; align-items:center }
+    .badge{ width:44px; height:44px; border-radius:10px; background: linear-gradient(135deg,var(--accent), #1567d8); display:grid; place-items:center; color:white; font-weight:700 }
+    .title{ font-size:18px; font-weight:700; margin:0 }
+    .subtitle{ margin:4px 0 0; color:var(--muted); font-size:14px }
+
+    .modal-body{ margin-top:14px; color:#0b1220; font-size:15px; line-height:1.35 }
+
+    .cta-row{ display:flex; gap:10px; margin-top:18px }
+    .btn{ flex:1; display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 14px; border-radius:10px; font-weight:600; border:0; cursor:pointer; font-size:15px }
+    .btn-primary{ background:var(--accent); color:#fff }
+    .btn-ghost{ background:transparent; color:var(--muted); border:1px solid #eef2f7 }
+
+    .small-note{ margin-top:12px; font-size:13px; color:var(--muted); text-align:center }
+
+    /* close button */
+    .close-btn{ position:absolute; top:18px; right:18px; background:transparent; border:0; color:#fff; font-size:22px; cursor:pointer }
+
+    /* responsive */
+    @media (max-width:420px){ .modal-card{ padding:18px } .badge{ width:40px; height:40px; } }
+
+    /* hidden */
+    .hidden{ display:none }
+  </style>
+</head>
+<body>
+
+<!-- Pop-up: cole onde quiser (no fim do body) -->
+<div id="modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-card" role="document">
+    <button id="closeX" class="close-btn" aria-label="Fechar">✕</button>
+    <div class="modal-head">
+      <div class="badge">30</div>
+      <div>
+        <h3 id="modal-title" class="title">🎉 Comece agora com 30 dias grátis!</h3>
+        <p class="subtitle">Teste todas as funcionalidades sem pagar nada no primeiro mês.</p>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      Use sem limites, explore todos os recursos e veja como o app pode facilitar seu dia a dia. <strong>Não precisa de compromisso — cancele quando quiser.</strong>
+
+      <div class="cta-row">
+        <button id="ctaPrimary" class="btn btn-primary">Começar teste grátis</button>
+        <button id="ctaSecondary" class="btn btn-ghost">Agora não</button>
+      </div>
+
+      <p class="small-note">Ao clicar em "Começar teste grátis" você concorda com nossos <a href="#" style="color:var(--accent); text-decoration:none">termos</a>.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    const modal = document.getElementById('modal');
+    const cta = document.getElementById('ctaPrimary');
+    const cancel = document.getElementById('ctaSecondary');
+    const closeX = document.getElementById('closeX');
+
+    // Acessibilidade: foco
+    const focusable = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const firstFocusable = () => modal.querySelectorAll(focusable)[0];
+    const focusableEls = () => modal.querySelectorAll(focusable);
+
+    // Show modal only if user hasn't dismissed before
+    const DISMISS_KEY = 'trial-popup-dismissed-v1';
+    if(localStorage.getItem(DISMISS_KEY) === 'true'){
+      modal.classList.add('hidden');
+      return;
+    }
+
+    // Set initial focus
+    window.addEventListener('load', ()=> setTimeout(()=> firstFocusable().focus(), 120));
+
+    // CTA: redireciona para página de cadastro / download
+    cta.addEventListener('click', ()=>{
+      // personalizado: altere a URL abaixo para a página de inscrição/loja
+      window.location.href = 'https://play.google.com/store/apps/details?id=com.storeeconnect.app';
+    });
+
+    // Cancel / Close: oculta e não mostrar de novo por 7 dias
+    function dismiss(){
+      modal.classList.add('hidden');
+      localStorage.setItem(DISMISS_KEY, 'true');
+      // opcional: para mostrar novamente depois de 7 dias, use:
+      // const until = Date.now() + 7*24*60*60*1000; localStorage.setItem(DISMISS_KEY, until);
+    }
+    cancel.addEventListener('click', dismiss);
+    closeX.addEventListener('click', dismiss);
+
+    // ESC para fechar
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape') dismiss();
+    });
+
+    // Clique fora para fechar
+    modal.addEventListener('click', (e)=>{
+      if(e.target === modal) dismiss();
+    });
+
+    // simples trap de foco dentro do modal
+    modal.addEventListener('keydown', (e)=>{
+      if(e.key !== 'Tab') return;
+      const nodes = Array.from(focusableEls());
+      if(nodes.length === 0) return;
+      const idx = nodes.indexOf(document.activeElement);
+      if(e.shiftKey && idx === 0){ nodes[nodes.length-1].focus(); e.preventDefault(); }
+      else if(!e.shiftKey && idx === nodes.length-1){ nodes[0].focus(); e.preventDefault(); }
+    });
+
+  })();
+</script>
+
+
+
+</body>
+</html>
+
+
+</body>
+
+</html>
