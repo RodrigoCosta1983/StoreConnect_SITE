@@ -1,14 +1,14 @@
 /**
-* Template Name: Appland
-* Template URL: https://bootstrapmade.com/free-bootstrap-app-landing-page-template/
-* Updated: Aug 07 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
+* Template Name:  
+* Template URL:  
+* Updated: Aug 07 2024 with  
+* Author:  
+* License:  
 */
 
 /*--------------------------------------------------------------
 # Font & Color Variables
-# Help: https://bootstrapmade.com/color-system/
+# Help: https:// 
 --------------------------------------------------------------*/
 /* Fonts */
 :root {
@@ -142,6 +142,207 @@ h6 {
 /*--------------------------------------------------------------
 # Global Header
 --------------------------------------------------------------*/
+
+/*--------------------------------------------------------------
+# Central do Assinante & Modal de Login
+--------------------------------------------------------------*/
+
+/* --- Botão no Menu (Header) --- */
+.btn-login {
+  margin-left: 20px;
+  margin-right: 10px;
+  font-size: 14px;
+  font-family: var(--heading-font); /* Fonte Raleway do tema */
+  font-weight: 500;
+  color: var(--heading-color);
+  text-decoration: none;
+  padding: 8px 25px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%); /* Borda sutil do tema */
+  border-radius: 50px; /* Pílula igual ao botão Comprar */
+  transition: 0.3s;
+  white-space: nowrap;
+  cursor: pointer;
+  background: transparent;
+}
+
+.btn-login:hover {
+  border-color: var(--accent-color); /* Azul #5777ba */
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color), transparent 95%);
+}
+
+/* Esconde em mobile */
+@media (max-width: 1200px) {
+  .btn-login { display: none; } 
+}
+
+/* --- Modal (Pop-up) --- */
+.modal-overlay {
+  background: rgba(33, 37, 41, 0.8); /* Escurecimento usando cores do tema */
+  backdrop-filter: blur(4px); /* Efeito de vidro moderno */
+}
+
+.modal-card {
+  background: var(--surface-color);
+  border-radius: 15px; /* Bordas arredondadas consistentes com o site */
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.15);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+}
+
+.login-title {
+  text-align: center;
+  margin-bottom: 25px;
+  color: var(--heading-color);
+  font-family: var(--heading-font);
+  font-weight: 700;
+  font-size: 24px;
+}
+
+/* --- Campos de Texto --- */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 14px;
+  color: var(--default-color);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.login-input { 
+  width: 100%; 
+  padding: 12px 15px; 
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
+  border-radius: 4px; /* Levemente arredondado como no formulário de contato */
+  font-size: 15px; 
+  font-family: var(--default-font);
+  color: var(--default-color);
+  background-color: var(--background-color);
+  outline: none;
+  transition: 0.3s;
+  box-sizing: border-box;
+}
+
+.login-input:focus { 
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color), transparent 90%);
+}
+
+.login-input::placeholder {
+  color: color-mix(in srgb, var(--default-color), transparent 60%);
+}
+
+/* --- Botão de Entrar --- */
+.btn-submit-login {
+  width: 100%;
+  background: var(--accent-color); /* Azul oficial */
+  color: var(--contrast-color);
+  padding: 12px;
+  border: none;
+  border-radius: 50px; /* Botão arredondado igual ao "Comprar" */
+  font-family: var(--heading-font);
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.3s;
+  box-shadow: 0 4px 15px color-mix(in srgb, var(--accent-color), transparent 70%);
+}
+
+.btn-submit-login:hover { 
+  background: color-mix(in srgb, var(--accent-color), transparent 15%);
+  transform: translateY(-2px); /* Efeito sutil de subida */
+}
+
+/* --- Links e Fechar --- */
+.login-footer { 
+  text-align: center; 
+  margin-top: 20px; 
+  font-size: 14px; 
+}
+
+.login-footer a { 
+  color: var(--accent-color); 
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}
+
+.close-btn {
+  color: var(--default-color) !important;
+  opacity: 0.6;
+  transition: 0.3s;
+  font-size: 24px;
+}
+
+.close-btn:hover {
+  opacity: 1;
+  color: var(--accent-color) !important;
+  transform: rotate(90deg);
+}
+
+/* --- Login com Google & Divisor --- */
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: color-mix(in srgb, var(--default-color), transparent 50%);
+  font-size: 13px;
+}
+
+.login-divider::before, 
+.login-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+}
+
+.login-divider span {
+  padding: 0 10px;
+  font-weight: 500;
+}
+
+.btn-google-login {
+  width: 100%;
+  background-color: #ffffff;
+  color: var(--heading-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
+  padding: 10px;
+  border-radius: 50px;
+  font-family: var(--heading-font);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: 0.3s;
+  position: relative;
+}
+
+.btn-google-login i {
+  /*font-size: 18px;
+  color: #DB4437;  Vermelho oficial do ícone do Google antigo, ou colorido se preferir */
+}
+
+/* Efeito Hover no botão Google */
+.btn-google-login:hover {
+  background-color: #f8f9fa;
+  border-color: var(--accent-color);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/*--------------------------------------------------------------*/
+
+
 .header {
   color: var(--default-color);
   background-color: var(--background-color);
