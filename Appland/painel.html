@@ -141,7 +141,7 @@
     // Função Principal: Checa se pagou
     async function verificarAssinatura(user) {
       try {
-        const docRef = doc(db, "lojas", user.uid);
+        const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
 
         let status = "inactive"; // Padrão é inativo
