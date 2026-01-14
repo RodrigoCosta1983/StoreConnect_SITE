@@ -981,5 +981,113 @@
     })();
   </script>
 
+  <script type="module">
+    // Importa as funções que precisamos do SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithPopup, 
+      GoogleAuthProvider, 
+      signInWithEmailAndPassword,
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    // 2. Sua Configuração do Firebase (SUBSTITUA PELOS SEUS DADOS)
+    // Você pega isso no Console do Firebase > Project Settings
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXvWxIcts2Nd8QW-prkD3rJHKxqMIyzUg",
+      authDomain: "store-connect-app.firebaseapp.com",
+      projectId: "store-connect-app",
+      storageBucket: "store-connect-app.firebasestorage.app",
+      messagingSenderId: "294766590074",
+      appId: "1:294766590074:web:fbe25231b8ef11d8afe3c3",
+      measurementId: "G-KYVFYLZHSQ"
+    };
+
+    // 3. Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // =======================================================
+    // LÓGICA DE LOGIN
+    // =======================================================
+
+    // A. Login com Google
+    const googleBtn = document.getElementById('googleLoginBtn');
+    
+    if(googleBtn) {
+      googleBtn.addEventListener('click', async () => {
+        try {
+          // Feedback visual simples (opcional)
+          googleBtn.innerHTML = 'Aguarde...';
+          
+          const result = await signInWithPopup(auth, provider);
+          const user = result.user;
+          console.log("Logado com Google:", user.email);
+          
+          // Sucesso! Redirecionar para o painel
+          window.location.href = "painel.html"; 
+          
+        } catch (error) {
+          console.error("Erro no Google Login:", error);
+          alert("Erro ao entrar com Google: " + error.message);
+          googleBtn.innerHTML = 'Entrar com Google'; // Restaura texto
+        }
+      });
+    }
+
+    // B. Login com Email/Senha (Formulário)
+    const loginForm = document.getElementById('loginForm');
+    
+    if(loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); // Evita recarregar a página
+        
+        // Pega os inputs (ajuste os seletores se necessário)
+        const email = loginForm.querySelector('input[type="email"]').value;
+        const password = loginForm.querySelector('input[type="password"]').value;
+        const btnSubmit = loginForm.querySelector('.btn-submit-login');
+        
+        try {
+          const originalText = btnSubmit.innerText;
+          btnSubmit.innerText = "Entrando...";
+          
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          console.log("Logado com Email:", userCredential.user.email);
+          
+          // Sucesso!
+          window.location.href = "painel.html";
+          
+        } catch (error) {
+          console.error("Erro no Login:", error);
+          let msg = "Erro ao entrar.";
+          if(error.code === 'auth/invalid-credential') msg = "E-mail ou senha incorretos.";
+          alert(msg);
+          
+          if(btnSubmit) btnSubmit.innerText = "Entrar";
+        }
+      });
+    }
+
+    // C. Verificar se já está logado (Opcional na home, essencial no painel)
+    // Se o usuário voltar pra home e já estiver logado, você pode mudar o botão "Central" para "Ir para Painel"
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("Usuário já logado detectado:", user.email);
+        const openBtn = document.getElementById('openLoginBtn');
+        if(openBtn) {
+          openBtn.innerText = "Ir para o Painel";
+          openBtn.href = "painel.html";
+          // Remove o evento de abrir modal para virar um link direto
+          // (Uma forma simples é clonar o nó para limpar eventos, ou apenas mudar a lógica)
+          openBtn.onclick = (e) => { e.stopPropagation(); return true; }; 
+        }
+      }
+    });
+
+  </script>
+
   </body>
 </html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minha Conta - Store & Connect</title>
+  
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    body { background-color: #f0f2f5; font-family: 'Poppins', sans-serif; }
+    .card-painel {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      border: none;
+      padding: 30px;
+      margin-top: 50px;
+    }
+    .status-badge {
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-block;
+      margin-bottom: 15px;
+    }
+    .status-active { background-color: #d1fae5; color: #065f46; } /* Verde */
+    .status-inactive { background-color: #fee2e2; color: #991b1b; } /* Vermelho */
+    .loader { display: none; text-align: center; padding: 50px; }
+    #conteudo-painel { display: none; } /* Escondido até carregar */
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">
+        <img src="assets/img/icon2.png" width="30" height="30" class="d-inline-block align-top me-2" alt="">
+        Store & Connect
+      </a>
+      <button id="btnLogout" class="btn btn-outline-danger btn-sm">Sair</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        
+        <div id="loader" class="loader" style="display: block;">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-2 text-muted">Carregando suas informações...</p>
+        </div>
+
+        <div id="conteudo-painel" class="card-painel">
+          
+          <div class="text-center mb-4">
+            <img id="userPhoto" src="https://via.placeholder.com/80" class="rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover;">
+            <h4 id="userName" class="fw-bold">Usuário</h4>
+            <p id="userEmail" class="text-muted small">carregando...</p>
+          </div>
+
+          <hr>
+
+          <div class="text-center">
+            <h5 class="mb-3">Status da Assinatura</h5>
+            
+            <div id="statusBadge" class="status-badge status-inactive">
+              Verificando...
+            </div>
+
+            <p id="statusMessage" class="text-muted mb-4">
+              Identificamos que você ainda não possui um plano ativo.
+            </p>
+
+            <div id="actionsBlock">
+              <button id="btnStripe" class="btn btn-primary w-100 py-2 mb-2 fw-bold">
+                <i class="bi bi-credit-card me-2"></i> 
+                <span id="btnStripeText">Assinar Agora</span>
+              </button>
+              
+              <p class="small text-muted mt-2">
+                Gerenciado de forma segura pelo Stripe.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // 1. Importações (Auth + Firestore)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // 2. Cole SUA CONFIGURAÇÃO aqui (A MESMA do index.html)
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+    apiKey: "AIzaSyAXvWxIcts2Nd8QW-prkD3rJHKxqMIyzUg",
+    authDomain: "store-connect-app.firebaseapp.com",
+    projectId: "store-connect-app",
+    storageBucket: "store-connect-app.firebasestorage.app",
+    messagingSenderId: "294766590074",
+    appId: "1:294766590074:web:fbe25231b8ef11d8afe3c3",
+    measurementId: "G-KYVFYLZHSQ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Elementos da UI
+    const loader = document.getElementById('loader');
+    const painel = document.getElementById('conteudo-painel');
+    const statusBadge = document.getElementById('statusBadge');
+    const statusMessage = document.getElementById('statusMessage');
+    const btnStripe = document.getElementById('btnStripe');
+    const btnStripeText = document.getElementById('btnStripeText');
+
+    // 3. Monitorar Auth
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        // Se não tá logado, tchau! Volta pra home.
+        window.location.href = "index.html";
+        return;
+      }
+
+      // Preenche dados básicos visualmente
+      document.getElementById('userName').innerText = user.displayName || "Lojista";
+      document.getElementById('userEmail').innerText = user.email;
+      if(user.photoURL) document.getElementById('userPhoto').src = user.photoURL;
+
+      // 4. Buscar dados da loja no Firestore
+      await verificarAssinatura(user);
+    });
+
+    // Função Principal: Checa se pagou
+    async function verificarAssinatura(user) {
+      try {
+        const docRef = doc(db, "lojas", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        let status = "inactive"; // Padrão é inativo
+
+        if (docSnap.exists()) {
+          const dados = docSnap.data();
+          status = dados.subscriptionStatus || "inactive"; 
+        } else {
+          // Se o documento não existe, cria um básico agora (Primeiro acesso)
+          // Isso garante que o usuário exista no seu banco
+          await setDoc(docRef, {
+            email: user.email,
+            dono: user.displayName,
+            subscriptionStatus: "inactive",
+            createdAt: new Date()
+          }, { merge: true });
+        }
+
+        atualizarTela(status);
+
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+        alert("Erro ao carregar assinatura.");
+      }
+    }
+
+    // Atualiza a UI baseada no status
+    function atualizarTela(status) {
+      loader.style.display = 'none';
+      painel.style.display = 'block';
+
+      if (status === 'active') {
+        // Cenario: PAGOU
+        statusBadge.className = "status-badge status-active";
+        statusBadge.innerText = "ASSINATURA ATIVA";
+        statusMessage.innerText = "Sua loja está funcionando perfeitamente.";
+        
+        btnStripeText.innerText = "Gerenciar Assinatura / Faturas";
+        // Aqui colocaremos o link do Portal do Cliente Stripe depois
+        btnStripe.onclick = () => { alert("Redirecionar para Portal Stripe..."); };
+
+      } else {
+        // Cenario: NÃO PAGOU / EXPIROU
+        statusBadge.className = "status-badge status-inactive";
+        statusBadge.innerText = "ASSINATURA INATIVA";
+        statusMessage.innerText = "Regularize seu plano para liberar o acesso ao App.";
+        
+        btnStripeText.innerText = "Assinar Agora (R$ 29,90)";
+        // Aqui colocaremos o link de Checkout do Stripe depois
+        btnStripe.onclick = () => { alert("Redirecionar para Checkout Stripe..."); };
+      }
+    }
+
+    // Botão Sair
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      signOut(auth).then(() => window.location.href = "index.html");
+    });
+
+  </script>
+</body>
+</html>
