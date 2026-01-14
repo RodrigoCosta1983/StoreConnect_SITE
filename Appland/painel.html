@@ -139,23 +139,43 @@
     });
 
     // Função Principal: Checa se pagou
+    // Função Principal: Busca o status na coleção STORES
     async function verificarAssinatura(user) {
       try {
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
+        // PASSO 1: Ler o documento do usuário para descobrir o ID da loja
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
 
-        let status = "inactive"; // Padrão é inativo
+        let status = "inactive"; // Padrão pessimista
 
-        if (docSnap.exists()) {
-          const dados = docSnap.data();
-          status = dados.subscriptionStatus || "inactive"; 
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          
+          // Verifica se o usuário tem uma loja vinculada
+          const myStoreId = userData.storeId; 
+
+          if (myStoreId) {
+            console.log("Loja encontrada:", myStoreId);
+
+            // PASSO 2: Ler o documento da LOJA (onde está o 'active')
+            const storeRef = doc(db, "stores", myStoreId);
+            const storeSnap = await getDoc(storeRef);
+
+            if (storeSnap.exists()) {
+              const storeData = storeSnap.data();
+              // Pega o status real que vimos na sua imagem
+              status = storeData.subscriptionStatus || "inactive";
+            }
+          } else {
+            console.log("Usuário sem storeId vinculado.");
+          }
         } else {
-          // Se o documento não existe, cria um básico agora (Primeiro acesso)
-          // Isso garante que o usuário exista no seu banco
-          await setDoc(docRef, {
+          // Se o usuário não existe no banco, cria apenas o registro básico
+          // (Geralmente isso é feito no cadastro, mas garante que não quebre)
+          console.log("Criando registro de usuário básico...");
+          await setDoc(userRef, {
             email: user.email,
             dono: user.displayName,
-            subscriptionStatus: "inactive",
             createdAt: new Date()
           }, { merge: true });
         }
@@ -164,7 +184,9 @@
 
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
-        alert("Erro ao carregar assinatura.");
+        // Se der erro de permissão aqui, é porque o storeId do usuário não bate com a loja
+        statusBadge.innerText = "Erro ao carregar";
+        statusBadge.className = "status-badge status-inactive";
       }
     }
 
