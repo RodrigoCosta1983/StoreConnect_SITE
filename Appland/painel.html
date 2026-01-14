@@ -75,14 +75,20 @@
             </p>
 
             <div id="actionsBlock">
-              <button id="btnStripe" class="btn btn-primary w-100 py-2 mb-2 fw-bold">
+  
+            <button id="btnStripe" class="btn btn-primary w-100 py-2 mb-2 fw-bold">
                 <i class="bi bi-credit-card me-2"></i> 
                 <span id="btnStripeText">Assinar Agora</span>
-              </button>
-              
-              <p class="small text-muted mt-2">
+            </button>
+            
+            <button id="btnPortal" class="btn btn-outline-secondary w-100 py-2 mb-2 fw-bold" style="display: none;">
+                <i class="bi bi-file-text me-2"></i> 
+                Minhas Faturas & Dados
+            </button>
+
+            <p class="small text-muted mt-2">
                 Gerenciado de forma segura pelo Stripe.
-              </p>
+            </p>
             </div>
           </div>
 
@@ -194,7 +200,85 @@
 
     // Atualiza a UI baseada no status
     // Função recebe o status E O USUÁRIO agora
+    // Função recebe o status E O USUÁRIO
     function atualizarTela(status, user) {
+      loader.style.display = 'none';
+      painel.style.display = 'block';
+      
+      const btnPortal = document.getElementById('btnPortal');
+      
+      // Lógica do Botão Secundário (Portal de Faturas)
+      // Só mostramos se o usuário JÁ TIVER histórico no Stripe (stripeCustomerId)
+      // Precisamos buscar esse dado do Firestore no passo anterior e passar pra cá,
+      // ou ler do objeto user se você tiver guardado lá.
+      // Vamos assumir que você buscou o userRef e temos os dados completos.
+      
+      // DICA: Para facilitar, vamos fazer a lógica do Portal aqui dentro do clique
+      
+      if (status === 'active') {
+        // --- CENÁRIO: ASSINANTE VIP ---
+        statusBadge.className = "status-badge status-active";
+        statusBadge.innerText = "ASSINATURA ATIVA";
+        statusMessage.innerText = "Sua loja está funcionando a todo vapor!";
+        
+        // Botão Principal vira apenas informativo ou "Upgrade"
+        btnStripeText.innerText = "Plano Ativo";
+        btnStripe.className = "btn btn-success w-100 py-2 mb-2 fw-bold disabled"; // Desabilita visualmente
+        btnStripe.onclick = null; // Não faz nada
+
+        // Mostra o botão do Portal para ele gerenciar
+        mostrarBotaoPortal(user);
+
+      } else {
+        // --- CENÁRIO: NÃO PAGOU / EXPIROU ---
+        statusBadge.className = "status-badge status-inactive";
+        statusBadge.innerText = "ASSINATURA INATIVA";
+        statusMessage.innerText = "Regularize para liberar o acesso ao App.";
+        
+        // Botão Principal: FOCO EM VENDER (Checkout)
+        btnStripe.className = "btn btn-primary w-100 py-2 mb-2 fw-bold";
+        btnStripeText.innerText = "Assinar Agora (R$ 10,00)";
+        btnStripe.onclick = () => { 
+            const linkStripe = "https://buy.stripe.com/test_dRm14nfjw6vRapJ4U82go00"; // <--- SEU LINK
+            window.location.href = `${linkStripe}?client_reference_id=${user.uid}&prefilled_email=${user.email}`; 
+        };
+
+        // Botão Secundário: Mostra SÓ se ele já for cliente antigo (para ver faturas passadas)
+        // Se for cliente novo (nunca comprou), esse botão continua invisível
+        mostrarBotaoPortal(user);
+      }
+    }
+
+    // Função auxiliar para ligar o Botão do Portal
+    async function mostrarBotaoPortal(user) {
+        const btnPortal = document.getElementById('btnPortal');
+        
+        // Precisamos verificar se o usuário tem o ID do Stripe no banco
+        // (Aqui estou assumindo que você leu o doc do usuário e tem o campo stripeCustomerId)
+        // Se você não tiver esse dado na mão, o botão não aparece, o que é seguro.
+        
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists() && userSnap.data().stripeCustomerId) {
+            
+            btnPortal.style.display = "block"; // Aparece o botão
+            
+            btnPortal.onclick = async () => {
+                btnPortal.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Carregando...';
+                try {
+                    // Chama sua Cloud Function
+                    const createPortalSession = httpsCallable(functions, 'createPortalSession');
+                    const result = await createPortalSession();
+                    window.location.href = result.data.url;
+                } catch (error) {
+                    console.error("Erro portal:", error);
+                    alert("Erro ao abrir faturas. Tente novamente.");
+                    btnPortal.innerText = "Minhas Faturas & Dados";
+                }
+            }
+        }
+    }
       loader.style.display = 'none';
       painel.style.display = 'block';
 
