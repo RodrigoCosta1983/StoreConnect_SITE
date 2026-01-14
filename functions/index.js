@@ -2,10 +2,12 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 // SUBSTITUA PELA SUA CHAVE SECRETA DE TESTE DO STRIPE (sk_test_...)
 // Carrega as variáveis do arquivo .env
-require('dotenv').config(); 
+ 
 
 // Pega a chave do ambiente
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+// Tenta pegar a config. Se não existir (rodando local), usa uma string vazia para não travar o deploy
+const stripeConfig = functions.config().stripe || {};
+const stripe = require("stripe")(stripeConfig.secret || "sk_test_chave_falsa_apenas_para_deploy");
 admin.initializeApp();
 
 exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
