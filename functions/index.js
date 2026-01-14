@@ -88,7 +88,7 @@ exports.createCheckoutSession = onCall(async (request) => {
     payment_method_types: ['card'],
     mode: 'subscription',
     line_items: [{
-      price: 'price_1RtaksF7qAVyn13sU1hY7R8l', // ID do seu PLANO R$ 25 (Vou confirmar se é esse mesmo)
+      price: 'price_1SSTkgF7qAVyn13seqbN6xMN', // ID do seu PLANO R$ 25 (Vou confirmar se é esse mesmo)
       quantity: 1,
     }],
     success_url: 'https://rodrigocosta1983.github.io/StoreConnect/Appland/painel.html?sucesso=true',
