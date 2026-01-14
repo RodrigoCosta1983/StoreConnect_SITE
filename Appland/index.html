@@ -9,7 +9,6 @@
   <meta name="keywords" content="gestão de loja, controle de estoque, vendas a prazo, PDV, aplicativo para lojistas, sistema de vendas">
 
 
-  <!-- Favicons -->
   <link href="assets/img/icon2.png" rel="icon">
   <link href="assets/img/icon2.png" rel="apple-touch-icon">
 
@@ -17,43 +16,79 @@
 
   <link rel="icon" type="image/png" href="assets/img/icon2.png?v=2">
 
-  <!-- Open Graph / Facebook / WhatsApp -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://rodrigocosta1983.github.io/">
-<meta property="og:title" content="Store&Connect">
-<meta property="og:description" content="A clareza que seu negócio precisa.">
-<meta property="og:image" content="https://github.com/RodrigoCosta1983/StoreConnect_SITE/blob/main/Appland/assets/img/icon2.png?raw=true">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rodrigocosta1983.github.io/">
+  <meta property="og:title" content="Store&Connect">
+  <meta property="og:description" content="A clareza que seu negócio precisa.">
+  <meta property="og:image" content="https://github.com/RodrigoCosta1983/StoreConnect_SITE/blob/main/Appland/assets/img/icon2.png?raw=true">
 
-<!-- Twitter / iMessage -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Store&Connect">
-<meta name="twitter:description" content="A clareza que seu negócio precisa.">
-<meta name="twitter:image" content="https://github.com/RodrigoCosta1983/StoreConnect_SITE/blob/main/Appland/assets/img/icon2.png?raw=true">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Store&Connect">
+  <meta name="twitter:description" content="A clareza que seu negócio precisa.">
+  <meta name="twitter:image" content="https://github.com/RodrigoCosta1983/StoreConnect_SITE/blob/main/Appland/assets/img/icon2.png?raw=true">
 
 
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
-  <!-- Vendor CSS Files -->
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/aos/aos.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
 
-  <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
+  
+  <style>
+    :root{
+      --bg: #0b1220;
+      --card: #ffffff;
+      --accent: #2f89fc; /* sua cor */
+      --muted: #6b7280;
+      --radius: 12px;
+      --shadow: 0 10px 30px rgba(11,18,32,0.45);
+      --maxw: 420px;
+      /* Fontes herdadas do body principal, removida redeclaração */
+    }
 
-  <!-- =======================================================
-  * Template Name: Store&Connect
-  * Template URL: https://storeeeonnect.com/ 
-  * Updated: Aug 07 2024 with Store&Connect v1.0.0
-  * Author: storeeeonnect.com
-  * License: https://storeeeonnect.com/license/
-  ======================================================== -->
-</head>
+    /* overlay */
+    .modal-overlay{
+      position: fixed; inset: 0; display: grid; place-items: center; z-index: 9999;
+      background: linear-gradient(180deg, rgba(2,6,23,0.48), rgba(2,6,23,0.72));
+      padding: 24px;
+      animation: fadeIn .18s ease;
+    }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    /* card */
+    .modal-card{ background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); width: 100%; max-width: var(--maxw); padding: 22px; box-sizing: border-box; }
+
+    .modal-head{ display:flex; gap:12px; align-items:center }
+    .badge{ width:44px; height:44px; border-radius:10px; background: linear-gradient(135deg,var(--accent), #1567d8); display:grid; place-items:center; color:white; font-weight:700 }
+    .title{ font-size:18px; font-weight:700; margin:0 }
+    .subtitle{ margin:4px 0 0; color:var(--muted); font-size:14px }
+
+    .modal-body{ margin-top:14px; color:#0b1220; font-size:15px; line-height:1.35 }
+
+    .cta-row{ display:flex; gap:10px; margin-top:18px }
+    .btn{ flex:1; display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 14px; border-radius:10px; font-weight:600; border:0; cursor:pointer; font-size:15px }
+    .btn-primary{ background:var(--accent); color:#fff }
+    .btn-ghost{ background:transparent; color:var(--muted); border:1px solid #eef2f7 }
+
+    .small-note{ margin-top:12px; font-size:13px; color:var(--muted); text-align:center }
+
+    /* close button */
+    .close-btn{ position:absolute; top:18px; right:18px; background:transparent; border:0; color:#fff; font-size:22px; cursor:pointer }
+
+    /* responsive */
+    @media (max-width:420px){ .modal-card{ padding:18px } .badge{ width:40px; height:40px; } }
+
+    /* hidden */
+    .hidden{ display:none }
+  </style>
+
+  </head>
 
 <body class="index-page">
 
@@ -69,39 +104,23 @@
           <li><a href="#hero" class="active">Home</a></li>
           <li><a href="#about">Sobre</a></li>
           <li><a href="#features">Características</a></li>
-         <!--  <li><a href="#gallery"></a></li> -->
           <li><a href="#pricing">Preços</a></li>
           <li><a href="#faq">F.A.Q</a></li>
-         <!--  <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="#">Dropdown 1</a></li>
-              <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                <ul>
-                  <li><a href="#">Deep Dropdown 1</a></li>
-                  <li><a href="#">Deep Dropdown 2</a></li>
-                  <li><a href="#">Deep Dropdown 3</a></li>
-                  <li><a href="#">Deep Dropdown 4</a></li>
-                  <li><a href="#">Deep Dropdown 5</a></li>
-                </ul>
-              </li>
-              <li><a href="#">Dropdown 2</a></li>
-              <li><a href="#">Dropdown 3</a></li>
-              <li><a href="#">Dropdown 4</a></li>
-            </ul>
-          </li> -->
           <li><a href="#contact">Contato</a></li>
+          
+          <li class="d-xl-none"><a href="#" class="js-login-btn">🔐 Central do Assinante</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="btn-getstarted" href="https://play.google.com/store/apps/details?id=com.storeeconnect.app">Comprar</a>
+      <a class="btn-login js-login-btn" href="#" id="openLoginBtn">Central do Assinante</a>
 
+      <a class="btn-getstarted" href="https://play.google.com/store/apps/details?id=com.storeeconnect.app">Comprar</a>
     </div>
   </header>
 
   <main class="main">
 
-    <!-- Hero Section -->
     <section id="hero" class="hero section">
 
       <div class="container">
@@ -120,19 +139,13 @@
         </div>
       </div>
 
-    </section><!-- /Hero Section -->
+    </section><section id="about" class="about section light-background">
 
-    <!-- About Section -->
-    <section id="about" class="about section light-background">
-
-      <!-- Section Title -->
       <div id="about" class="container section-title" data-aos="fade-up">
         
         <h2>Sobre</h2>
         <p>Menos planilhas, zero inadimplência.</p>
-      </div><!-- End Section Title -->
-
-      <div class="container">
+      </div><div class="container">
 
         <div class="row gy-4">
 
@@ -145,8 +158,7 @@
             <ul>
               <li><i class="bi bi-check2-circle"></i> <span>Acaba com a inadimplência: Saiba na hora quem está com pagamentos em atraso. O sistema identifica e organiza os clientes devedores, permitindo uma cobrança rápida, fácil e sem constrangimentos. Dê adeus ao caderninho e às perdas por esquecimento.</span></li>
               <li><i class="bi bi-check2-circle"></i> <span>Descobre seus clientes de ouro: Nossos relatórios mostram quem são os clientes que mais compram, quais produtos eles preferem e com que frequência retornam. Use essa inteligência para criar promoções exclusivas e construir um relacionamento que fideliza de verdade.</span></li>
-              <!-- <li><i class="bi bi-check2-circle"></i> <span>Ullamco laboris nisi ut aliquip ex ea commodo</span></li> -->
-            </ul>
+              </ul>
           </div>
 
           <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
@@ -159,18 +171,12 @@
 
       </div>
 
-    </section><!-- /About Section -->
+    </section><section id="features" class="features section">
 
-    <!-- Features Section -->
-    <section id="features" class="features section">
-
-      <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>Características</h2>
         <p><em>O que o Store&Connect oferece:</em></p>
-      </div><!-- End Section Title -->
-
-      <div class="container">
+      </div><div class="container">
 
         <div class="row gy-5">
 
@@ -188,49 +194,37 @@
                   <h4>Controle de Estoque em Tempo Real</h4>
                   <p>Visualize status de produtos (normal, baixo, esgotado) com alertas automáticos.</p>
                 </div>
-              </div><!-- End Feature Item -->
-
-              <div class="col-md-6 icon-box">
+              </div><div class="col-md-6 icon-box">
                 <i class="">💰</i>
                 <div>
                   <h4>Venda Rápida / PDV</h4>
                   <p>Interface responsiva para vendas rápidas com carrinho flexível.</p>
                 </div>
-              </div><!-- End Feature Item -->
-
-              <div class="col-md-6 icon-box">
+              </div><div class="col-md-6 icon-box">
                 <i class="">🧾</i>
                 <div>
                   <h4>Vendas a Prazo</h4>
                   <p>Registre vendas a prazo para clientes cadastrados.</p>
                 </div>
-              </div><!-- End Feature Item -->
-
-              <div class="col-md-6 icon-box">
+              </div><div class="col-md-6 icon-box">
                 <i class="">📊</i>
                 <div>
                   <h4>Dashboard e Relatórios</h4>
                   <p>KPIs em tempo real, relatórios por período, contas a receber, curva ABC etc.</p>
                 </div>
-              </div><!-- End Feature Item -->
-
-              <div class="col-md-6 icon-box">
+              </div><div class="col-md-6 icon-box">
                 <i class="">🔒</i>
                 <div>
                   <h4>Segurança & Perfil</h4>
                   <p>Login seguro, autenticação, perfil, biometrias e controle de acesso.</p>
                 </div>
-              </div><!-- End Feature Item -->
-
-              <div class="col-md-6 icon-box">
+              </div><div class="col-md-6 icon-box">
                 <i class="">💳</i>
                 <div>
                   <h4>Integração & Monetização</h4>
                   <p>Integrações com Google Play Billing, Stripe (web), validação de assinatura.</p>
                 </div>
-              </div><!-- End Feature Item -->
-
-            </div>
+              </div></div>
 
           </div>
 
@@ -238,10 +232,7 @@
 
       </div>
 
-    </section><!-- /Features Section -->
-
-    <!-- Feature Details Section -->
-    <section id="feature-details" class="feature-details section">
+    </section><section id="feature-details" class="feature-details section">
 
       <div class="container">
 
@@ -262,9 +253,7 @@
 
             </ul>
           </div>
-        </div><!-- Features Item -->
-
-        <div class="row gy-4 align-items-center features-item">
+        </div><div class="row gy-4 align-items-center features-item">
           <div class="col-md-3 order-1 order-md-2 d-flex align-items-center" data-aos="zoom-out" data-aos-delay="200">
             <img src="assets/img/estoque01.jpg" class="img-fluid img-rounded" alt="">
 
@@ -282,9 +271,7 @@
               Como você pode ver nas imagens, o sistema bloqueia a venda de produtos esgotados, evitando o constrangimento de não poder entregar o que o cliente pediu.
             </p>
           </div>
-        </div><!-- Features Item -->
-
-        <div class="row gy-4 align-items-center features-item">
+        </div><div class="row gy-4 align-items-center features-item">
           <div class="col-md-4 d-flex align-items-center" data-aos="zoom-out">
             <img src="assets/img/relatorios.png" class="img-fluid img-rounded" alt="">
           </div>
@@ -310,40 +297,13 @@
 
             </ul>
           </div>
-        </div><!-- Features Item 
-
-        <div class="row gy-4 align-items-center features-item">
-          <div class="col-md-5 order-1 order-md-2 d-flex align-items-center" data-aos="zoom-out">
-            <img src="assets/img/features-4.png" class="img-fluid" alt="">
-          </div>
-          <div class="col-md-7 order-2 order-md-1" data-aos="fade-up">
-            <h3>Quas et necessitatibus eaque impedit ipsum animi consequatur incidunt in</h3>
-            <p class="fst-italic">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-              magna aliqua.
-            </p>
-            <p>
-              Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-              velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-              culpa qui officia deserunt mollit anim id est laborum
-            </p>
-          </div>
-        </div> Features Item -->
-
+        </div>
       </div>
 
-    </section><!-- /Feature Details Section -->
+    </section><section id="gallery" class="gallery section">
 
-    <!-- Gallery Section -->
-    <section id="gallery" class="gallery section">
-
-      <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
-        <!-- <h2>Gallery</h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p> -->
-      </div><!-- End Section Title -->
-
-      <div class="container-fluid" data-aos="fade-up" data-aos-delay="100">
+        </div><div class="container-fluid" data-aos="fade-up" data-aos-delay="100">
 
         <div class="swiper init-swiper">
           <script type="application/json" class="swiper-config">
@@ -381,36 +341,18 @@
             }
           </script>
           <div class="swiper-wrapper align-items-center">
-            <!-- <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery-full" href="assets/img/app-gallery/app-gallery-1.png"><img src="assets/img/app-gallery/app-gallery-1.png" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery-full" href="assets/img/app-gallery/app-gallery-2.png"><img src="assets/img/app-gallery/app-gallery-2.png" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery-full" href="assets/img/app-gallery/app-gallery-3.png"><img src="assets/img/app-gallery/app-gallery-3.png" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery-full" href="assets/img/app-gallery/app-gallery-4.png"><img src="assets/img/app-gallery/app-gallery-4.png" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery-full" href="assets/img/app-gallery/app-gallery-5.png"><img src="assets/img/app-gallery/app-gallery-5.png" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery-full" href="assets/img/app-gallery/app-gallery-6.png"><img src="assets/img/app-gallery/app-gallery-6.png" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery-full" href="assets/img/app-gallery/app-gallery-7.png"><img src="assets/img/app-gallery/app-gallery-7.png" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery-full" href="assets/img/app-gallery/app-gallery-8.png"><img src="assets/img/app-gallery/app-gallery-8.png" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery-full" href="assets/img/app-gallery/app-gallery-9.png"><img src="assets/img/app-gallery/app-gallery-9.png" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery-full" href="assets/img/app-gallery/app-gallery-10.png"><img src="assets/img/app-gallery/app-gallery-10.png" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery-full" href="assets/img/app-gallery/app-gallery-11.png"><img src="assets/img/app-gallery/app-gallery-11.png" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery-full" href="assets/img/app-gallery/app-gallery-12.png"><img src="assets/img/app-gallery/app-gallery-12.png" class="img-fluid" alt=""></a></div>
- -->          </div>
+            </div>
           <div class="swiper-pagination"></div>
         </div>
 
       </div>
 
-    </section><!-- /Gallery Section -->
+    </section><section id="testimonials" class="testimonials section light-background">
 
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="testimonials section light-background">
-
-      <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>Depoimentos</h2>
         <p>A satisfação do nosso cliente também é nossa</p>
-      </div><!-- End Section Title -->
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
+      </div><div class="container" data-aos="fade-up" data-aos-delay="100">
 
         <div class="swiper init-swiper">
           <script type="application/json" class="swiper-config">
@@ -445,7 +387,6 @@
                 <div class="testimonial-item">
                   <img src="assets/img/testimonials/eduardo.jpg" class="testimonial-img" alt="">
                   <h3>Eduardo Sacramento</h3>
-                  <!-- <h4>Ceo &amp; Mercado Batista</h4> -->
                   <div class="stars">
                     <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
                   </div>
@@ -457,14 +398,11 @@
                   </p>
                 </div>
               </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
+            </div><div class="swiper-slide">
               <div class="testimonial-wrap">
                 <div class="testimonial-item">
                   <img src="assets/img/testimonials/yasmim.jpg" class="testimonial-img" alt="">
                   <h3>Yasmim Arcenes</h3>
-                  <!-- <h4>Designer</h4> -->
                   <div class="stars">
                     <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
                   </div>
@@ -477,14 +415,11 @@
                   </p>
                 </div>
               </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
+            </div><div class="swiper-slide">
               <div class="testimonial-wrap">
                 <div class="testimonial-item">
                   <img src="assets/img/testimonials/jeffer.jpg" class="testimonial-img" alt="">
                   <h3>Jeffer Ribeiro</h3>
-                  <!-- <h4>Store Owner</h4> -->
                   <div class="stars">
                     <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
                   </div>
@@ -497,14 +432,11 @@
                   </p>
                 </div>
               </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
+            </div><div class="swiper-slide">
               <div class="testimonial-wrap">
                 <div class="testimonial-item">
                   <img src="assets/img/testimonials/jorge.jpg" class="testimonial-img" alt="">
                   <h3>Jorge</h3>
-                  <!-- <h4>lojista</h4> -->
                   <div class="stars">
                     <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
                   </div>
@@ -516,14 +448,11 @@
                   </p>
                 </div>
               </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
+            </div><div class="swiper-slide">
               <div class="testimonial-wrap">
                 <div class="testimonial-item">
                   <img src="assets/img/testimonials/sheila.jpg" class="testimonial-img" alt="">
                   <h3>Sheila Almeida</h3>
-                  <!-- <h4>lojista</h4> -->
                   <div class="stars">
                     <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
                   </div>
@@ -535,26 +464,18 @@
                   </p>
                 </div>
               </div>
-            </div><!-- End testimonial item -->
-
-          </div>
+            </div></div>
           <div class="swiper-pagination"></div>
         </div>
 
       </div>
 
-    </section><!-- /Testimonials Section -->
+    </section><section id="pricing" class="pricing section">
 
-    <!-- Pricing Section -->
-    <section id="pricing" class="pricing section">
-
-      <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>Um plano simples e transparente para sua loja.</h2>
         <p>Comece gratuitamente por 7 dias. Sem compromisso e sem precisar de cartão de crédito.</p>
-      </div><!-- End Section Title -->
-
-      <div class="container">
+      </div><div class="container">
 
         <div class="row g-5 g-lg-0">
 
@@ -568,13 +489,10 @@
                 <li><i class=""></i> <span>✅ Cadastro ilimitado de clientes</span></li>
                 <li><i class=""></i> <span>✅ Suporte via e-mail</span></li>
                 <li class=""><i class=""></i> <span>✅ Sem necessidade de cartão de crédito</span></li>
-                <!-- <li class="na"><i class="bi bi-x"></i> <span>Massa ultricies mi quis hendrerit</span></li> -->
-              </ul>
+                </ul>
               <div class="text-center"><a href="#" class="buy-btn">Iniciar meu teste grátis</a></div>
             </div>
-          </div><!-- End Pricing Item -->
-
-          <div class="col-lg-4 featured" data-aos="zoom-in" data-aos-delay="200">
+          </div><div class="col-lg-4 featured" data-aos="zoom-in" data-aos-delay="200">
             <div class="pricing-item">
               <h3>Plano Pro</h3>
               <h4><sup>R$</sup>25<span> / <em>mês</em></span></h4>
@@ -589,16 +507,13 @@
               </ul>
               <div class="text-center"><a href="#" class="buy-btn">Comprar Agora</a></div>
             </div>
-          </div><!-- End Pricing Item -->
-
-          <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="100">
+          </div><div class="col-lg-4" data-aos="zoom-in" data-aos-delay="100">
             <div class="pricing-item">
               <h3>Plano Corporativo</h3>
               <h4><sup>R$</sup><span>Sob Consulta</span></h4>
               <p><span>Para redes, franquias ou negócios que buscam uma solução exclusiva.</span></p>
               <ul>
                 <li><i class=""></i> <span>✅ APP personalizado com a sua marca</span></li>
-                <!-- <li><i class="bi bi-check"></i> <span>Nec feugiat nisl pretium</span></li> -->
                 <li><i class=""></i> <span>✅ Funcionalidades sob medida</span></li>
                 <li><i class=""></i> <span>✅ Integração com seus sistemas</span></li>
                 <li><i class=""></i> <span>✅ Implantação e treinamento</span></li>
@@ -606,24 +521,16 @@
               <div class="text-center"><a href="#" class="buy-btn">Fale com um especialista</a></div>
             </div>
           </div>
-          <!-- End Pricing Item -->
-
-        </div>
+          </div>
 
       </div>
 
-    </section><!-- /Pricing Section -->
+    </section><section id="faq" class="faq section light-background">
 
-    <!-- Faq Section -->
-    <section id="faq" class="faq section light-background">
-
-      <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>Perguntas frequentes</h2>
         <p> Tudo o que você precisa saber antes de começar, respondido de forma clara e direta.</p>
-      </div><!-- End Section Title -->
-
-      <div class="container">
+      </div><div class="container">
 
         <div class="row justify-content-center">
 
@@ -639,9 +546,7 @@
                     registra suas vendas, gerencia as vendas a prazo de forma segura e acessa relatórios inteligentes para tomar as melhores decisões para o seu negócio.</p>
                 </div>
                 <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item" data-aos="fade-up" data-aos-delay="300">
+              </div><div class="faq-item" data-aos="fade-up" data-aos-delay="300">
                 <i class="faq-icon bi bi-question-circle"></i>
                 <h3>Como funciona o teste grátis de 7 dias?</h3>
                 <div class="faq-content">
@@ -650,18 +555,14 @@
                     você receberá um aviso e poderá decidir se deseja assinar o Plano Completo para continuar usando.</p>
                 </div>
                 <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item" data-aos="fade-up" data-aos-delay="400">
+              </div><div class="faq-item" data-aos="fade-up" data-aos-delay="400">
                 <i class="faq-icon bi bi-question-circle"></i>
                 <h3>O que acontece com meus dados se eu não assinar após o teste?</h3>
                 <div class="faq-content">
                   <p>Seus dados ficam salvos em segurança em sua conta por um período. Caso decida assinar mais tarde, todas as informações de produtos e vendas que você cadastrou estarão lá esperando por você.</p>
                 </div>
                 <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item" data-aos="fade-up" data-aos-delay="500">
+              </div><div class="faq-item" data-aos="fade-up" data-aos-delay="500">
                 <i class="faq-icon bi bi-question-circle"></i>
                 <h3>Preciso ter conhecimento técnico para usar o aplicativo?</h3>
                 <div class="faq-content">
@@ -670,9 +571,7 @@
                     Nossa interface é limpa e direta ao ponto.</p>
                 </div>
                 <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item" data-aos="fade-up" data-aos-delay="600">
+              </div><div class="faq-item" data-aos="fade-up" data-aos-delay="600">
                 <i class="faq-icon bi bi-question-circle"></i>
                 <h3>Meus dados de vendas e clientes estão seguros?</h3>
                 <div class="faq-content">
@@ -680,9 +579,7 @@
                     com criptografia e backups automáticos. Seus dados são seus e ninguém mais tem acesso a eles.</p>
                 </div>
                 <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item" data-aos="fade-up" data-aos-delay="600">
+              </div><div class="faq-item" data-aos="fade-up" data-aos-delay="600">
                 <i class="faq-icon bi bi-question-circle"></i>
                 <h3>Preciso de um computador ou de algum equipamento especial?</h3>
                 <div class="faq-content">
@@ -690,9 +587,7 @@
                     permitindo que você gerencie sua loja inteira na palma da mão, de onde estiver.</p>
                 </div>
                 <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item" data-aos="fade-up" data-aos-delay="600">
+              </div><div class="faq-item" data-aos="fade-up" data-aos-delay="600">
                 <i class="faq-icon bi bi-question-circle"></i>
                 <h3>Que tipo de suporte vocês oferecem?</h3>
                 <div class="faq-content">
@@ -701,11 +596,7 @@
                     garantindo que suas dúvidas sejam resolvidas o mais rápido possível.</p>
                 </div>
                 <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-               
-
-            </div>
+              </div></div>
 
           </div>
 
@@ -713,18 +604,12 @@
 
       </div>
 
-    </section><!-- /Faq Section -->
+    </section><section id="contact" class="contact section">
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact section">
-
-      <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>Contato</h2>
         <p>Seja para tirar uma dúvida, dar um feedback ou propor uma parceria, este é o seu canal direto conosco.</p>
-      </div><!-- End Section Title -->
-
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
+      </div><div class="container" data-aos="fade-up" data-aos-delay="100">
 
         <div class="row gy-4">
 
@@ -735,39 +620,29 @@
                 <div class="info-item" data-aos="fade" data-aos-delay="200">
                   <i class="bi bi-geo-alt"></i>
                   <h3>End:</h3>
-                  <!-- <p>Rua Irapua, 317</p> -->
                   <p>Rio de Janeiro, RJ</p>
                 </div>
-              </div><!-- End Info Item -->
-
-              <div class="col-md-6">
+              </div><div class="col-md-6">
                 <div class="info-item" data-aos="fade" data-aos-delay="300">
                   <i class="bi bi-telephone"></i>
                   <h3>WhatsApp</h3>
                   <p>21-98505-0120</p>
-                  <!-- <p>+1 6678 254445 41</p> -->
-                </div>
-              </div><!-- End Info Item -->
-
-              <div class="col-md-6">
+                  </div>
+              </div><div class="col-md-6">
                 <div class="info-item" data-aos="fade" data-aos-delay="400">
                   <i class="bi bi-envelope"></i>
                   <h3>Email Us</h3>
                   <p>contato@storeeconect.com</p>
                   <p>contact@example.com</p>
                 </div>
-              </div><!-- End Info Item -->
-
-              <div class="col-md-6">
+              </div><div class="col-md-6">
                 <div class="info-item" data-aos="fade" data-aos-delay="500">
                   <i class="bi bi-clock"></i>
                   <h3>Open Hours</h3>
                   <p>Segunda - Sexta</p>
                   <p>9:00AM - 05:00PM</p>
                 </div>
-              </div><!-- End Info Item -->
-
-            </div>
+              </div></div>
 
           </div>
 
@@ -801,15 +676,11 @@
 
               </div>
             </form>
-          </div><!-- End Contact Form -->
-
-        </div>
+          </div></div>
 
       </div>
 
-    </section><!-- /Contact Section -->
-
-  </main>
+    </section></main>
 
   <footer id="footer" class="footer">
 
@@ -837,7 +708,6 @@
             <span class="sitename">Store&Connect</span>
           </a>
           <div class="footer-contact pt-3">
-            <!-- <p>Rua Irapua, 317</p> -->
             <p>Rio de Janeiro, RJ</p>
             <p class="mt-3"><strong>WhatsApp:</strong> <span>21-98505-0120</span></p>
             <p><strong>Email:</strong> <span>contato@storeeconect.com</span></p>
@@ -881,70 +751,63 @@
     <div class="container copyright text-center mt-4">
       <p>© <span>Copyright</span> <strong class="px-1 sitename">Store&Connect</strong> <span>All Rights Reserved</span></p>
       <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you've purchased the pro version. -->
-        <!-- Licensing information: https://storeeeonnect.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
         Designed by <a href="https://storeeeonnect.com/">Store&Connect</a>
       </div>
     </div>
 
   </footer>
 
-  <!-- Scroll Top -->
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-  <!-- Preloader -->
   <div id="preloader"></div>
 
 
   <script>
-//var url = 'https://cdn.waplus.io/waplus-crm/settings/ossembed.js';
-var s = document.createElement('script');
-s.type = 'text/javascript';
-s.async = true;
-//s.src = url;
-s.src = 'assets/js/ossembed.js';
-var options = {
-"enabled": true,
-"chatButtonSetting": {
-"backgroundColor": "#16BE45",
-//"ctaText": "Envie-nos uma mensagem",
-"ctaText": "",
-"borderRadius": "8",
-"marginLeft": "20",
-"marginBottom": "100",
-"marginRight": "20",
-"position": "right",
-"textColor": "#ffffff",
-"phoneNumber": "5521985050120",
-"messageText": "👋🏻Olá",
-"trackClick": true
-},
-"brandSetting": {
-"brandName": "Store&Connect",
-"brandSubTitle": "Respostas em até 1 dia  \"Store&Connect\"",
-"headerTextColor": "#fff",
-"brandImg": "https://rodrigocosta1983.github.io/StoreConnect_SITE/Appland/assets/img/apple-touch-icon.png",
-"welcomeText": "Oi! Em que posso ajudar?",
-"messageText": "Olá, gostaria de tirar algumas dúvidas ",
-"backgroundColor": "#0a5f54",
-"ctaText": "Start Chat",
-"borderRadius": "20",
-"autoShow": false,
-"btnColor": "#16BE45",
-"phoneNumber": "5521985050120",
-"trackClick": true
-}
-}
-s.onload = function() {
-CreateWhatsappChatWidget(options);
-};
-var x = document.getElementsByTagName('script')[0];
-x.parentNode.insertBefore(s, x);
-</script>
+    //var url = 'https://cdn.waplus.io/waplus-crm/settings/ossembed.js';
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = true;
+    //s.src = url;
+    s.src = 'assets/js/ossembed.js';
+    var options = {
+    "enabled": true,
+    "chatButtonSetting": {
+    "backgroundColor": "#16BE45",
+    //"ctaText": "Envie-nos uma mensagem",
+    "ctaText": "",
+    "borderRadius": "8",
+    "marginLeft": "20",
+    "marginBottom": "100",
+    "marginRight": "20",
+    "position": "right",
+    "textColor": "#ffffff",
+    "phoneNumber": "5521985050120",
+    "messageText": "👋🏻Olá",
+    "trackClick": true
+    },
+    "brandSetting": {
+    "brandName": "Store&Connect",
+    "brandSubTitle": "Respostas em até 1 dia  \"Store&Connect\"",
+    "headerTextColor": "#fff",
+    "brandImg": "https://rodrigocosta1983.github.io/StoreConnect_SITE/Appland/assets/img/apple-touch-icon.png",
+    "welcomeText": "Oi! Em que posso ajudar?",
+    "messageText": "Olá, gostaria de tirar algumas dúvidas ",
+    "backgroundColor": "#0a5f54",
+    "ctaText": "Start Chat",
+    "borderRadius": "20",
+    "autoShow": false,
+    "btnColor": "#16BE45",
+    "phoneNumber": "5521985050120",
+    "trackClick": true
+    }
+    }
+    s.onload = function() {
+    CreateWhatsappChatWidget(options);
+    };
+    var x = document.getElementsByTagName('script')[0];
+    x.parentNode.insertBefore(s, x);
+  </script>
 
-  <!-- Vendor JS Files -->
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
@@ -952,158 +815,291 @@ x.parentNode.insertBefore(s, x);
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
 
-
-  <!doctype html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Pop-up — 30 dias grátis</title>
-  <style>
-    :root{
-      --bg: #0b1220;
-      --card: #ffffff;
-      --accent: #2f89fc; /* sua cor */
-      --muted: #6b7280;
-      --radius: 12px;
-      --shadow: 0 10px 30px rgba(11,18,32,0.45);
-      --maxw: 420px;
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    }
-
-    /* overlay */
-    .modal-overlay{
-      position: fixed; inset: 0; display: grid; place-items: center; z-index: 9999;
-      background: linear-gradient(180deg, rgba(2,6,23,0.48), rgba(2,6,23,0.72));
-      padding: 24px;
-      animation: fadeIn .18s ease;
-    }
-    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
-    /* card */
-    .modal-card{ background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); width: 100%; max-width: var(--maxw); padding: 22px; box-sizing: border-box; }
-
-    .modal-head{ display:flex; gap:12px; align-items:center }
-    .badge{ width:44px; height:44px; border-radius:10px; background: linear-gradient(135deg,var(--accent), #1567d8); display:grid; place-items:center; color:white; font-weight:700 }
-    .title{ font-size:18px; font-weight:700; margin:0 }
-    .subtitle{ margin:4px 0 0; color:var(--muted); font-size:14px }
-
-    .modal-body{ margin-top:14px; color:#0b1220; font-size:15px; line-height:1.35 }
-
-    .cta-row{ display:flex; gap:10px; margin-top:18px }
-    .btn{ flex:1; display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 14px; border-radius:10px; font-weight:600; border:0; cursor:pointer; font-size:15px }
-    .btn-primary{ background:var(--accent); color:#fff }
-    .btn-ghost{ background:transparent; color:var(--muted); border:1px solid #eef2f7 }
-
-    .small-note{ margin-top:12px; font-size:13px; color:var(--muted); text-align:center }
-
-    /* close button */
-    .close-btn{ position:absolute; top:18px; right:18px; background:transparent; border:0; color:#fff; font-size:22px; cursor:pointer }
-
-    /* responsive */
-    @media (max-width:420px){ .modal-card{ padding:18px } .badge{ width:40px; height:40px; } }
-
-    /* hidden */
-    .hidden{ display:none }
-  </style>
-</head>
-<body>
-
-<!-- Pop-up: cole onde quiser (no fim do body) -->
-<div id="modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-  <div class="modal-card" role="document">
-    <button id="closeX" class="close-btn" aria-label="Fechar">✕</button>
-    <div class="modal-head">
-      <div class="badge">30</div>
-      <div>
-        <h3 id="modal-title" class="title">🎉 Comece agora com 30 dias grátis!</h3>
-        <p class="subtitle">Teste todas as funcionalidades sem pagar nada no primeiro mês.</p>
-      </div>
-    </div>
-
-    <div class="modal-body">
-      Use sem limites, explore todos os recursos e veja como o app pode facilitar seu dia a dia. <strong>Não precisa de compromisso — cancele quando quiser.</strong>
-
-      <div class="cta-row">
-        <button id="ctaPrimary" class="btn btn-primary">Começar teste grátis</button>
-        <button id="ctaSecondary" class="btn btn-ghost">Agora não</button>
+  <div id="modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card" role="document">
+      <button id="closeX" class="close-btn" aria-label="Fechar">✕</button>
+      <div class="modal-head">
+        <div class="badge">30</div>
+        <div>
+          <h3 id="modal-title" class="title">🎉 Comece agora com 30 dias grátis!</h3>
+          <p class="subtitle">Teste todas as funcionalidades sem pagar nada no primeiro mês.</p>
+        </div>
       </div>
 
-      <p class="small-note">Ao clicar em "Começar teste grátis" você concorda com nossos <a href="#" style="color:var(--accent); text-decoration:none">termos</a>.</p>
+      <div class="modal-body">
+        Use sem limites, explore todos os recursos e veja como o app pode facilitar seu dia a dia. <strong>Não precisa de compromisso — cancele quando quiser.</strong>
+
+        <div class="cta-row">
+          <button id="ctaPrimary" class="btn btn-primary">Começar teste grátis</button>
+          <button id="ctaSecondary" class="btn btn-ghost">Agora não</button>
+        </div>
+
+        <p class="small-note">Ao clicar em "Começar teste grátis" você concorda com nossos <a href="#" style="color:var(--accent); text-decoration:none">termos</a>.</p>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-  (function(){
-    const modal = document.getElementById('modal');
-    const cta = document.getElementById('ctaPrimary');
-    const cancel = document.getElementById('ctaSecondary');
-    const closeX = document.getElementById('closeX');
+  <script>
+    (function(){
+      const modal = document.getElementById('modal');
+      const cta = document.getElementById('ctaPrimary');
+      const cancel = document.getElementById('ctaSecondary');
+      const closeX = document.getElementById('closeX');
 
-    // Acessibilidade: foco
-    const focusable = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-    const firstFocusable = () => modal.querySelectorAll(focusable)[0];
-    const focusableEls = () => modal.querySelectorAll(focusable);
+      // Acessibilidade: foco
+      const focusable = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+      const firstFocusable = () => modal.querySelectorAll(focusable)[0];
+      const focusableEls = () => modal.querySelectorAll(focusable);
 
-    // Show modal only if user hasn't dismissed before
-    const DISMISS_KEY = 'trial-popup-dismissed-v1';
-    if(localStorage.getItem(DISMISS_KEY) === 'true'){
-      modal.classList.add('hidden');
-      return;
+      // Show modal only if user hasn't dismissed before
+      const DISMISS_KEY = 'trial-popup-dismissed-v1';
+      if(localStorage.getItem(DISMISS_KEY) === 'true'){
+        modal.classList.add('hidden');
+        return;
+      }
+
+      // Set initial focus
+      window.addEventListener('load', ()=> setTimeout(()=> firstFocusable().focus(), 3000));
+
+      // CTA: redireciona para página de cadastro / download
+      cta.addEventListener('click', ()=>{
+        // personalizado: altere a URL abaixo para a página de inscrição/loja
+        window.location.href = 'https://play.google.com/store/apps/details?id=com.storeeconnect.app';
+      });
+
+      // Cancel / Close: oculta e não mostrar de novo por 7 dias
+      function dismiss(){
+        modal.classList.add('hidden');
+        localStorage.setItem(DISMISS_KEY, 'true');
+        // opcional: para mostrar novamente depois de 7 dias, use:
+        // const until = Date.now() + 7*24*60*60*1000; localStorage.setItem(DISMISS_KEY, until);
+      }
+      cancel.addEventListener('click', dismiss);
+      closeX.addEventListener('click', dismiss);
+
+      // ESC para fechar
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape') dismiss();
+      });
+
+      // Clique fora para fechar
+      modal.addEventListener('click', (e)=>{
+        if(e.target === modal) dismiss();
+      });
+
+      // simples trap de foco dentro do modal
+      modal.addEventListener('keydown', (e)=>{
+        if(e.key !== 'Tab') return;
+        const nodes = Array.from(focusableEls());
+        if(nodes.length === 0) return;
+        const idx = nodes.indexOf(document.activeElement);
+        if(e.shiftKey && idx === 0){ nodes[nodes.length-1].focus(); e.preventDefault(); }
+        else if(!e.shiftKey && idx === nodes.length-1){ nodes[0].focus(); e.preventDefault(); }
+      });
+
+    })();
+  </script>
+
+  <div id="modalLogin" class="modal-overlay hidden" style="z-index: 10000;">
+    <div class="modal-card" style="max-width: 380px;">
+      <button id="closeLoginX" class="close-btn" style="color: #333; top: 15px; right: 15px;">✕</button>
+      
+      <div class="modal-body" style="margin-top: 0;">
+        <h3 class="login-title">Acesse sua conta</h3>
+        
+        <form id="loginForm">
+          <div class="input-group">
+            <label>E-mail</label>
+            <input type="email" class="login-input" placeholder="seu@email.com" required>
+          </div>
+          
+          <div class="input-group">
+            <label>Senha</label>
+            <input type="password" class="login-input" placeholder="••••••••" required>
+          </div>
+
+          <button type="submit" class="btn-submit-login">Entrar</button>
+        </form>
+
+        <div class="login-divider">
+          <span>ou</span>
+        </div>
+
+        <button type="button" class="btn-google-login" id="googleLoginBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
+            <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+            <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+            <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+            <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+          </svg>
+          Entrar com Google
+        </button>
+        <div class="login-footer">
+          <a href="#">Esqueci minha senha</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      // Elementos do Login
+      const modalLogin = document.getElementById('modalLogin');
+      const btnClose = document.getElementById('closeLoginX');
+      
+      // MUDANÇA: Seleciona TODOS os botões de login (Desktop e Mobile) pela classe
+      // Adicionei a classe "js-login-btn" nos dois links no HTML
+      const loginButtons = document.querySelectorAll('.js-login-btn');
+
+      // Adiciona evento em todos os botões encontrados
+      loginButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault(); 
+          
+          // Se já estiver logado (href diferente de #), vai para o link
+          if(btn.getAttribute('href') !== '#') {
+             window.location.href = btn.getAttribute('href');
+             return;
+          }
+
+          // Se não, abre o modal
+          modalLogin.classList.remove('hidden');
+
+          // Fecha o menu mobile se estiver aberto (melhoria de UX)
+          if(document.querySelector('.mobile-nav-active')){
+            document.querySelector('body').classList.remove('mobile-nav-active');
+            const toggle = document.querySelector('.mobile-nav-toggle');
+            if(toggle) toggle.classList.toggle('bi-list');
+            if(toggle) toggle.classList.toggle('bi-x');
+          }
+        });
+      });
+
+      // Fechar Modal (X)
+      if(btnClose){
+        btnClose.addEventListener('click', () => {
+          modalLogin.classList.add('hidden');
+        });
+      }
+
+      // Fechar clicando fora
+      window.addEventListener('click', (e) => {
+        if (e.target === modalLogin) {
+          modalLogin.classList.add('hidden');
+        }
+      });
+      
+      const form = document.getElementById('loginForm');
+      if(form){
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          // Lógica tratada no script do Firebase abaixo
+        });
+      }
+
+    })();
+  </script>
+
+  <script type="module">
+    // Importa as funções que precisamos do SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithPopup, 
+      GoogleAuthProvider, 
+      signInWithEmailAndPassword,
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    // 2. Sua Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXvWxIcts2Nd8QW-prkD3rJHKxqMIyzUg",
+      authDomain: "store-connect-app.firebaseapp.com",
+      projectId: "store-connect-app",
+      storageBucket: "store-connect-app.firebasestorage.app",
+      messagingSenderId: "294766590074",
+      appId: "1:294766590074:web:fbe25231b8ef11d8afe3c3",
+      measurementId: "G-KYVFYLZHSQ"
+    };
+
+    // 3. Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // =======================================================
+    // LÓGICA DE LOGIN
+    // =======================================================
+
+    // A. Login com Google
+    const googleBtn = document.getElementById('googleLoginBtn');
+    
+    if(googleBtn) {
+      googleBtn.addEventListener('click', async () => {
+        try {
+          googleBtn.innerHTML = 'Aguarde...';
+          const result = await signInWithPopup(auth, provider);
+          const user = result.user;
+          console.log("Logado com Google:", user.email);
+          window.location.href = "painel.html"; 
+        } catch (error) {
+          console.error("Erro no Google Login:", error);
+          alert("Erro ao entrar com Google: " + error.message);
+          googleBtn.innerHTML = 'Entrar com Google'; 
+        }
+      });
     }
 
-    // Set initial focus
-    window.addEventListener('load', ()=> setTimeout(()=> firstFocusable().focus(), 3000));
-
-    // CTA: redireciona para página de cadastro / download
-    cta.addEventListener('click', ()=>{
-      // personalizado: altere a URL abaixo para a página de inscrição/loja
-      window.location.href = 'https://play.google.com/store/apps/details?id=com.storeeconnect.app';
-    });
-
-    // Cancel / Close: oculta e não mostrar de novo por 7 dias
-    function dismiss(){
-      modal.classList.add('hidden');
-      localStorage.setItem(DISMISS_KEY, 'true');
-      // opcional: para mostrar novamente depois de 7 dias, use:
-      // const until = Date.now() + 7*24*60*60*1000; localStorage.setItem(DISMISS_KEY, until);
+    // B. Login com Email/Senha (Formulário)
+    const loginForm = document.getElementById('loginForm');
+    
+    if(loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = loginForm.querySelector('input[type="email"]').value;
+        const password = loginForm.querySelector('input[type="password"]').value;
+        const btnSubmit = loginForm.querySelector('.btn-submit-login');
+        
+        try {
+          const originalText = btnSubmit.innerText;
+          btnSubmit.innerText = "Entrando...";
+          
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          console.log("Logado com Email:", userCredential.user.email);
+          
+          window.location.href = "painel.html";
+          
+        } catch (error) {
+          console.error("Erro no Login:", error);
+          let msg = "Erro ao entrar.";
+          if(error.code === 'auth/invalid-credential') msg = "E-mail ou senha incorretos.";
+          alert(msg);
+          
+          if(btnSubmit) btnSubmit.innerText = "Entrar";
+        }
+      });
     }
-    cancel.addEventListener('click', dismiss);
-    closeX.addEventListener('click', dismiss);
 
-    // ESC para fechar
-    document.addEventListener('keydown', (e)=>{
-      if(e.key === 'Escape') dismiss();
+    // C. Verificar se já está logado
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("Usuário já logado detectado:", user.email);
+        
+        // MUDANÇA: Seleciona TODOS os botões de login para mudar o texto
+        const allLoginBtns = document.querySelectorAll('.js-login-btn');
+        
+        allLoginBtns.forEach(btn => {
+          btn.innerText = "Ir para o Painel";
+          btn.href = "painel.html";
+          // Não precisamos remover eventListener pois a lógica lá em cima checa o href
+        });
+      }
     });
 
-    // Clique fora para fechar
-    modal.addEventListener('click', (e)=>{
-      if(e.target === modal) dismiss();
-    });
+  </script>
 
-    // simples trap de foco dentro do modal
-    modal.addEventListener('keydown', (e)=>{
-      if(e.key !== 'Tab') return;
-      const nodes = Array.from(focusableEls());
-      if(nodes.length === 0) return;
-      const idx = nodes.indexOf(document.activeElement);
-      if(e.shiftKey && idx === 0){ nodes[nodes.length-1].focus(); e.preventDefault(); }
-      else if(!e.shiftKey && idx === nodes.length-1){ nodes[0].focus(); e.preventDefault(); }
-    });
-
-  })();
-</script>
-
-
-
-</body>
-</html>
-
-
-</body>
-
+  </body>
 </html>
