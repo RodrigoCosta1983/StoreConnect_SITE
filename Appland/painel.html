@@ -213,9 +213,13 @@
         
         btnStripeText.innerText = "Assinar Agora (R$ 29,90)";
         // Aqui colocaremos o link de Checkout do Stripe depois
-        btnStripe.onclick = () => { 
-            window.location.href = "https://buy.stripe.com/test_dRm14nfjw6vRapJ4U82go00"; 
+
+            btnStripe.onclick = () => { 
+        // Adiciona o ID do usuário na URL para o Stripe saber quem é
+        const linkStripe = "https://buy.stripe.com/test_dRm14nfjw6vRapJ4U82go00"; // <--- Mantenha seu link original aqui
+        window.location.href = `${linkStripe}?client_reference_id=${user.uid}&prefilled_email=${user.email}`; 
         };
+        
       }
     }
 
