@@ -170,7 +170,7 @@
             console.log("Usuário sem storeId vinculado.");
           }
         } else {
-          // Se o usuário não existe no banco, cria apenas o registro básico
+          // Se o usuário não existe no banco, cria apenas o registro básico 
           // (Geralmente isso é feito no cadastro, mas garante que não quebre)
           console.log("Criando registro de usuário básico...");
           await setDoc(userRef, {
@@ -180,7 +180,7 @@
           }, { merge: true });
         }
 
-        atualizarTela(status);
+        atualizarTela(status, user);
 
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -191,7 +191,8 @@
     }
 
     // Atualiza a UI baseada no status
-    function atualizarTela(status) {
+    // Função recebe o status E O USUÁRIO agora
+    function atualizarTela(status, user) {
       loader.style.display = 'none';
       painel.style.display = 'block';
 
@@ -199,11 +200,10 @@
         // Cenario: PAGOU
         statusBadge.className = "status-badge status-active";
         statusBadge.innerText = "ASSINATURA ATIVA";
-        statusMessage.innerText = "Sua loja está funcionando perfeitamente.";
+        statusMessage.innerText = "Sua loja está funcionando perfeitamente. Obrigado por assinar!";
         
         btnStripeText.innerText = "Gerenciar Assinatura / Faturas";
-        // Aqui colocaremos o link do Portal do Cliente Stripe depois
-        btnStripe.onclick = () => { alert("Redirecionar para Portal Stripe..."); };
+        btnStripe.onclick = () => { alert("Em breve: Portal do Cliente Stripe"); };
 
       } else {
         // Cenario: NÃO PAGOU / EXPIROU
@@ -212,14 +212,15 @@
         statusMessage.innerText = "Regularize seu plano para liberar o acesso ao App.";
         
         btnStripeText.innerText = "Assinar Agora (R$ 29,90)";
-        // Aqui colocaremos o link de Checkout do Stripe depois
 
-            btnStripe.onclick = () => { 
-        // Adiciona o ID do usuário na URL para o Stripe saber quem é
-        const linkStripe = "https://buy.stripe.com/test_dRm14nfjw6vRapJ4U82go00"; // <--- Mantenha seu link original aqui
-        window.location.href = `${linkStripe}?client_reference_id=${user.uid}&prefilled_email=${user.email}`; 
+        btnStripe.onclick = () => { 
+            // AGORA VAI FUNCIONAR: O 'user' chegou aqui!
+            const linkStripe = "https://buy.stripe.com/test_dRm14nfjw6vRapJ4U82go00";
+            
+            console.log("Gerando link para:", user.uid); // Debug para confirmar
+            
+            window.location.href = `${linkStripe}?client_reference_id=${user.uid}&prefilled_email=${user.email}`; 
         };
-        
       }
     }
 
