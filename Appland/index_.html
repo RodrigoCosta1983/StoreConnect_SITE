@@ -946,17 +946,36 @@
   <script>
     (function(){
       // Elementos do Login
-      const btnOpen = document.getElementById('openLoginBtn');
       const modalLogin = document.getElementById('modalLogin');
       const btnClose = document.getElementById('closeLoginX');
+      
+      // MUDANÇA: Seleciona TODOS os botões de login (Desktop e Mobile) pela classe
+      // Adicionei a classe "js-login-btn" nos dois links no HTML
+      const loginButtons = document.querySelectorAll('.js-login-btn');
 
-      // Abrir Modal
-      if(btnOpen){
-        btnOpen.addEventListener('click', (e) => {
-          e.preventDefault(); // Evita pular para o topo da página
+      // Adiciona evento em todos os botões encontrados
+      loginButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault(); 
+          
+          // Se já estiver logado (href diferente de #), vai para o link
+          if(btn.getAttribute('href') !== '#') {
+             window.location.href = btn.getAttribute('href');
+             return;
+          }
+
+          // Se não, abre o modal
           modalLogin.classList.remove('hidden');
+
+          // Fecha o menu mobile se estiver aberto (melhoria de UX)
+          if(document.querySelector('.mobile-nav-active')){
+            document.querySelector('body').classList.remove('mobile-nav-active');
+            const toggle = document.querySelector('.mobile-nav-toggle');
+            if(toggle) toggle.classList.toggle('bi-list');
+            if(toggle) toggle.classList.toggle('bi-x');
+          }
         });
-      }
+      });
 
       // Fechar Modal (X)
       if(btnClose){
@@ -972,12 +991,13 @@
         }
       });
       
-      // Submit do formulário (apenas visual por enquanto)
       const form = document.getElementById('loginForm');
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        alert("Botão clicado! Aqui você integrará com a API do Store&Connect.");
-      });
+      if(form){
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          // Lógica tratada no script do Firebase abaixo
+        });
+      }
 
     })();
   </script>
@@ -993,9 +1013,7 @@
       onAuthStateChanged 
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    // 2. Sua Configuração do Firebase (SUBSTITUA PELOS SEUS DADOS)
-    // Você pega isso no Console do Firebase > Project Settings
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    // 2. Sua Configuração do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyAXvWxIcts2Nd8QW-prkD3rJHKxqMIyzUg",
       authDomain: "store-connect-app.firebaseapp.com",
@@ -1021,20 +1039,15 @@
     if(googleBtn) {
       googleBtn.addEventListener('click', async () => {
         try {
-          // Feedback visual simples (opcional)
           googleBtn.innerHTML = 'Aguarde...';
-          
           const result = await signInWithPopup(auth, provider);
           const user = result.user;
           console.log("Logado com Google:", user.email);
-          
-          // Sucesso! Redirecionar para o painel
           window.location.href = "painel.html"; 
-          
         } catch (error) {
           console.error("Erro no Google Login:", error);
           alert("Erro ao entrar com Google: " + error.message);
-          googleBtn.innerHTML = 'Entrar com Google'; // Restaura texto
+          googleBtn.innerHTML = 'Entrar com Google'; 
         }
       });
     }
@@ -1044,9 +1057,8 @@
     
     if(loginForm) {
       loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Evita recarregar a página
+        e.preventDefault();
         
-        // Pega os inputs (ajuste os seletores se necessário)
         const email = loginForm.querySelector('input[type="email"]').value;
         const password = loginForm.querySelector('input[type="password"]').value;
         const btnSubmit = loginForm.querySelector('.btn-submit-login');
@@ -1058,7 +1070,6 @@
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           console.log("Logado com Email:", userCredential.user.email);
           
-          // Sucesso!
           window.location.href = "painel.html";
           
         } catch (error) {
@@ -1072,19 +1083,19 @@
       });
     }
 
-    // C. Verificar se já está logado (Opcional na home, essencial no painel)
-    // Se o usuário voltar pra home e já estiver logado, você pode mudar o botão "Central" para "Ir para Painel"
+    // C. Verificar se já está logado
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("Usuário já logado detectado:", user.email);
-        const openBtn = document.getElementById('openLoginBtn');
-        if(openBtn) {
-          openBtn.innerText = "Central do Assinante";
-          openBtn.href = "painel.html";
-          // Remove o evento de abrir modal para virar um link direto
-          // (Uma forma simples é clonar o nó para limpar eventos, ou apenas mudar a lógica)
-          openBtn.onclick = (e) => { e.stopPropagation(); return true; }; 
-        }
+        
+        // MUDANÇA: Seleciona TODOS os botões de login para mudar o texto
+        const allLoginBtns = document.querySelectorAll('.js-login-btn');
+        
+        allLoginBtns.forEach(btn => {
+          btn.innerText = "Ir para o Painel";
+          btn.href = "painel.html";
+          // Não precisamos remover eventListener pois a lógica lá em cima checa o href
+        });
       }
     });
 
