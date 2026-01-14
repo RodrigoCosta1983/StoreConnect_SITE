@@ -98,22 +98,21 @@
   </div>
 
   <script type="module">
-    // 1. Importações (Auth + Firestore)
+    // 1. Importações
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-functions.js";
 
-    // 2. Cole SUA CONFIGURAÇÃO aqui (A MESMA do index.html)
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    // 2. Configuração
     const firebaseConfig = {
-    apiKey: "AIzaSyAXvWxIcts2Nd8QW-prkD3rJHKxqMIyzUg",
-    authDomain: "store-connect-app.firebaseapp.com",
-    projectId: "store-connect-app",
-    storageBucket: "store-connect-app.firebasestorage.app",
-    messagingSenderId: "294766590074",
-    appId: "1:294766590074:web:fbe25231b8ef11d8afe3c3",
-    measurementId: "G-KYVFYLZHSQ"
+      apiKey: "AIzaSyAXvWxIcts2Nd8QW-prkD3rJHKxqMIyzUg",
+      authDomain: "store-connect-app.firebaseapp.com",
+      projectId: "store-connect-app",
+      storageBucket: "store-connect-app.firebasestorage.app",
+      messagingSenderId: "294766590074",
+      appId: "1:294766590074:web:fbe25231b8ef11d8afe3c3",
+      measurementId: "G-KYVFYLZHSQ"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -126,13 +125,10 @@
     const painel = document.getElementById('conteudo-painel');
     const statusBadge = document.getElementById('statusBadge');
     const statusMessage = document.getElementById('statusMessage');
-    const btnStripe = document.getElementById('btnStripe');
-    const btnStripeText = document.getElementById('btnStripeText');
 
     // 3. Monitorar Auth
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        // Se não tá logado, tchau! Volta pra home.
         window.location.href = "index.html";
         return;
       }
@@ -142,45 +138,35 @@
       document.getElementById('userEmail').innerText = user.email;
       if(user.photoURL) document.getElementById('userPhoto').src = user.photoURL;
 
-      // 4. Buscar dados da loja no Firestore
+      // 4. Buscar dados da loja
       await verificarAssinatura(user);
     });
 
-    // Função Principal: Checa se pagou
-    // Função Principal: Busca o status na coleção STORES
+    // Função Principal
     async function verificarAssinatura(user) {
       try {
-        // PASSO 1: Ler o documento do usuário para descobrir o ID da loja
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
 
-        let status = "inactive"; // Padrão pessimista
+        let status = "inactive"; 
 
         if (userSnap.exists()) {
           const userData = userSnap.data();
-          
-          // Verifica se o usuário tem uma loja vinculada
           const myStoreId = userData.storeId; 
 
           if (myStoreId) {
             console.log("Loja encontrada:", myStoreId);
-
-            // PASSO 2: Ler o documento da LOJA (onde está o 'active')
             const storeRef = doc(db, "stores", myStoreId);
             const storeSnap = await getDoc(storeRef);
 
             if (storeSnap.exists()) {
-              const storeData = storeSnap.data();
-              // Pega o status real que vimos na sua imagem
-              status = storeData.subscriptionStatus || "inactive";
+              status = storeSnap.data().subscriptionStatus || "inactive";
             }
           } else {
             console.log("Usuário sem storeId vinculado.");
           }
         } else {
-          // Se o usuário não existe no banco, cria apenas o registro básico 
-          // (Geralmente isso é feito no cadastro, mas garante que não quebre)
-          console.log("Criando registro de usuário básico...");
+          // Cria registro básico se não existir
           await setDoc(userRef, {
             email: user.email,
             dono: user.displayName,
@@ -188,140 +174,85 @@
           }, { merge: true });
         }
 
-        atualizarTela(status, user);
+        // Chama a função visual corrigida
+        await atualizarTela(status, user);
 
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
-        // Se der erro de permissão aqui, é porque o storeId do usuário não bate com a loja
         statusBadge.innerText = "Erro ao carregar";
         statusBadge.className = "status-badge status-inactive";
       }
     }
 
-    // Atualiza a UI baseada no status
-    // Função recebe o status E O USUÁRIO agora
-    // Função recebe o status E O USUÁRIO
-    function atualizarTela(status, user) {
+    // --- LÓGICA HÍBRIDA (2 BOTÕES) CORRIGIDA ---
+    async function atualizarTela(status, user) {
       loader.style.display = 'none';
       painel.style.display = 'block';
-      
+
+      const btnMain = document.getElementById('btnStripe');
+      const btnMainText = document.getElementById('btnStripeText');
       const btnPortal = document.getElementById('btnPortal');
       
-      // Lógica do Botão Secundário (Portal de Faturas)
-      // Só mostramos se o usuário JÁ TIVER histórico no Stripe (stripeCustomerId)
-      // Precisamos buscar esse dado do Firestore no passo anterior e passar pra cá,
-      // ou ler do objeto user se você tiver guardado lá.
-      // Vamos assumir que você buscou o userRef e temos os dados completos.
-      
-      // DICA: Para facilitar, vamos fazer a lógica do Portal aqui dentro do clique
-      
-      if (status === 'active') {
-        // --- CENÁRIO: ASSINANTE VIP ---
-        statusBadge.className = "status-badge status-active";
-        statusBadge.innerText = "ASSINATURA ATIVA";
-        statusMessage.innerText = "Sua loja está funcionando a todo vapor!";
-        
-        // Botão Principal vira apenas informativo ou "Upgrade"
-        btnStripeText.innerText = "Plano Ativo";
-        btnStripe.className = "btn btn-success w-100 py-2 mb-2 fw-bold disabled"; // Desabilita visualmente
-        btnStripe.onclick = null; // Não faz nada
+      const badge = document.getElementById('statusBadge');
+      const msg = document.getElementById('statusMessage');
 
-        // Mostra o botão do Portal para ele gerenciar
-        mostrarBotaoPortal(user);
-
+      // ---------------------------------------------------------
+      // 1. LÓGICA DO BOTÃO SECUNDÁRIO (PORTAL / FATURAS)
+      // Verifica se o usuário tem histórico (stripeCustomerId)
+      // ---------------------------------------------------------
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      
+      if (userSnap.exists() && userSnap.data().stripeCustomerId) {
+          // Se tem histórico, MOSTRA o botão de faturas
+          btnPortal.style.display = "block";
+          
+          btnPortal.onclick = async () => {
+              const originalText = btnPortal.innerHTML;
+              btnPortal.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Carregando...';
+              
+              try {
+                  const createPortalSession = httpsCallable(functions, 'createPortalSession');
+                  const result = await createPortalSession();
+                  window.location.href = result.data.url;
+              } catch (erro) {
+                  console.error(erro);
+                  alert("Erro ao abrir portal.");
+                  btnPortal.innerHTML = originalText;
+              }
+          };
       } else {
-        // --- CENÁRIO: NÃO PAGOU / EXPIROU ---
-        statusBadge.className = "status-badge status-inactive";
-        statusBadge.innerText = "ASSINATURA INATIVA";
-        statusMessage.innerText = "Regularize para liberar o acesso ao App.";
-        
-        // Botão Principal: FOCO EM VENDER (Checkout)
-        btnStripe.className = "btn btn-primary w-100 py-2 mb-2 fw-bold";
-        btnStripeText.innerText = "Assinar Agora (R$ 10,00)";
-        btnStripe.onclick = () => { 
-            const linkStripe = "https://buy.stripe.com/test_dRm14nfjw6vRapJ4U82go00"; // <--- SEU LINK
-            window.location.href = `${linkStripe}?client_reference_id=${user.uid}&prefilled_email=${user.email}`; 
-        };
-
-        // Botão Secundário: Mostra SÓ se ele já for cliente antigo (para ver faturas passadas)
-        // Se for cliente novo (nunca comprou), esse botão continua invisível
-        mostrarBotaoPortal(user);
+          // Se não tem histórico (nunca comprou), esconde
+          btnPortal.style.display = "none";
       }
-    }
 
-    // Função auxiliar para ligar o Botão do Portal
-    async function mostrarBotaoPortal(user) {
-        const btnPortal = document.getElementById('btnPortal');
-        
-        // Precisamos verificar se o usuário tem o ID do Stripe no banco
-        // (Aqui estou assumindo que você leu o doc do usuário e tem o campo stripeCustomerId)
-        // Se você não tiver esse dado na mão, o botão não aparece, o que é seguro.
-        
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-        
-        if (userSnap.exists() && userSnap.data().stripeCustomerId) {
-            
-            btnPortal.style.display = "block"; // Aparece o botão
-            
-            btnPortal.onclick = async () => {
-                btnPortal.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Carregando...';
-                try {
-                    // Chama sua Cloud Function
-                    const createPortalSession = httpsCallable(functions, 'createPortalSession');
-                    const result = await createPortalSession();
-                    window.location.href = result.data.url;
-                } catch (error) {
-                    console.error("Erro portal:", error);
-                    alert("Erro ao abrir faturas. Tente novamente.");
-                    btnPortal.innerText = "Minhas Faturas & Dados";
-                }
-            }
-        }
-    }
-      loader.style.display = 'none';
-      painel.style.display = 'block';
-
+      // ---------------------------------------------------------
+      // 2. LÓGICA DO BOTÃO PRINCIPAL (STATUS / CHECKOUT)
+      // ---------------------------------------------------------
       if (status === 'active') {
-        // Cenario: PAGOU
-        statusBadge.className = "status-badge status-active";
-        statusBadge.innerText = "ASSINATURA ATIVA";
-        statusMessage.innerText = "Sua loja está funcionando perfeitamente. Obrigado por assinar!";
+        // --- CENÁRIO: TUDO OK ---
+        badge.className = "status-badge status-active";
+        badge.innerText = "ASSINATURA ATIVA";
+        msg.innerText = "Sua loja está online e funcionando.";
         
-        btnStripeText.innerText = "Gerenciar Assinatura / Faturas";
-        btnStripe.onclick = async () => { 
-            // Muda texto para dar feedback
-            btnStripeText.innerText = "Abrindo Portal...";
-            
-            try {
-                // Chama a função no Backend
-                const createPortalSession = httpsCallable(functions, 'createPortalSession');
-                const result = await createPortalSession();
-                
-                // Redireciona para o link que o backend devolveu
-                window.location.href = result.data.url;
-                
-            } catch (error) {
-                console.error("Erro ao abrir portal:", error);
-                alert("Erro ao abrir portal. Verifique se o pagamento já foi processado totalmente.");
-                btnStripeText.innerText = "Gerenciar Assinatura";
-            }
-        };
+        // Botão Principal vira apenas um "Crachá" informativo
+        btnMain.className = "btn btn-success w-100 py-2 mb-2 fw-bold disabled";
+        btnMainText.innerText = "Plano Ativo ✔";
+        btnMain.style.opacity = "1"; 
+        btnMain.onclick = null; // Não faz nada, pois o gerenciamento é no botão secundário
 
       } else {
-        // Cenario: NÃO PAGOU / EXPIROU
-        statusBadge.className = "status-badge status-inactive";
-        statusBadge.innerText = "ASSINATURA INATIVA";
-        statusMessage.innerText = "Regularize seu plano para liberar o acesso ao App.";
+        // --- CENÁRIO: PENDENTE / CANCELADO ---
+        badge.className = "status-badge status-inactive";
+        badge.innerText = "ASSINATURA INATIVA";
+        msg.innerText = "Regularize seu pagamento para liberar o acesso.";
         
-        btnStripeText.innerText = "Assinar Agora (R$ 29,90)";
-
-        btnStripe.onclick = () => { 
-            // AGORA VAI FUNCIONAR: O 'user' chegou aqui!
-            const linkStripe = "https://buy.stripe.com/test_dRm14nfjw6vRapJ4U82go00";
-            
-            console.log("Gerando link para:", user.uid); // Debug para confirmar
-            
+        // Botão Principal vira CHECKOUT (Venda)
+        btnMain.className = "btn btn-primary w-100 py-2 mb-2 fw-bold";
+        btnMainText.innerText = "Assinar Agora (R$ 10,00)";
+        
+        btnMain.onclick = () => { 
+            const linkStripe = "https://buy.stripe.com/test_dRm14nfjw6vRapJ4U82go00"; 
             window.location.href = `${linkStripe}?client_reference_id=${user.uid}&prefilled_email=${user.email}`; 
         };
       }
