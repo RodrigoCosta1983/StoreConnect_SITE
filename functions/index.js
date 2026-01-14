@@ -64,3 +64,37 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
 
   res.json({received: true});
 });
+
+
+// Função que cria o link do Portal
+exports.createPortalSession = functions.https.onCall(async (data, context) => {
+  // 1. Segurança: Verifica se o usuário está logado
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Usuário não logado.');
+  }
+
+  const userId = context.auth.uid;
+  const db = admin.firestore();
+
+  // 2. Busca o ID do Cliente Stripe (customerId) no banco
+  // IMPORTANTE: Seu Webhook precisa ter salvo o 'stripeCustomerId' na coleção 'users' ou 'stores'
+  // Vamos assumir que está no documento do usuário em 'users'
+  const userDoc = await db.collection('users').doc(userId).get();
+  const userData = userDoc.data();
+  
+  // Se você salvou o customerId dentro da LOJA, mude a lógica acima para buscar na 'stores'
+  const customerId = userData.stripeCustomerId; 
+
+  if (!customerId) {
+    throw new functions.https.HttpsError('failed-precondition', 'Cliente Stripe não encontrado para este usuário.');
+  }
+
+  // 3. Pede ao Stripe o link mágico
+  const session = await stripe.billingPortal.sessions.create({
+    customer: customerId,
+    return_url: 'https://store-connect-app.web.app/painel.html', // Para onde ele volta ao sair
+  });
+
+  // 4. Devolve o link para o Frontend
+  return { url: session.url };
+});
