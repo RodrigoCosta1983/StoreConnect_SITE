@@ -41,6 +41,7 @@ exports.stripeWebhook = onRequest(async (req, res) => {
         // Se tiver loja vinculada, libera também
         const userDoc = await admin.firestore().collection("users").doc(userId).get();
         if (userDoc.exists && userDoc.data().storeId) {
+            // ISSO AQUI É O QUE DESBLOQUEIA O APP DO CLIENTE ANTIGO
             await admin.firestore().collection("stores").doc(userDoc.data().storeId).update({
                 subscriptionStatus: "active",
                 subscriptionId: subscriptionId,
