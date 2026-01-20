@@ -49,7 +49,6 @@
       --radius: 12px;
       --shadow: 0 10px 30px rgba(11,18,32,0.45);
       --maxw: 420px;
-      /* Fontes herdadas do body principal, removida redeclaração */
     }
 
     /* overlay */
@@ -107,7 +106,6 @@
           <li><a href="#pricing">Preços</a></li>
           <li><a href="#faq">F.A.Q</a></li>
           <li><a href="#contact">Contato</a></li>
-          
           <li class="d-xl-none"><a href="#" class="js-login-btn">🔐 Central do Assinante</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
@@ -164,7 +162,9 @@
           <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
             <p>O melhor de tudo é que esse controle financeiro está totalmente integrado à gestão de estoque, ao registro de vendas da loja física e online e a todas as outras funcionalidades essenciais para o seu dia a dia. 
               Nosso propósito é transformar a gestão do seu varejo, tornando-a mais eficiente, segura e baseada em dados reais. Com o Store&Connect, você ganha a clareza para tomar as melhores decisões e a liberdade para focar no crescimento do seu negócio.</p>
-            <div class="text-center"><a href="#" class="buy-btn js-login-btn">Iniciar meu teste grátis</a></div>
+            <a href="https://play.google.com/store/apps/details?id=com.storeeconnect.app" class="read-more"><span>Experimente grátis por 30 dias</span><i class="bi bi-arrow-right"></i></a>
+          </div>
+
         </div>
 
       </div>
@@ -488,7 +488,7 @@
                 <li><i class=""></i> <span>✅ Suporte via e-mail</span></li>
                 <li class=""><i class=""></i> <span>✅ Sem necessidade de cartão de crédito</span></li>
                 </ul>
-              <div class="text-center"><a href="#" class="buy-btn">Iniciar meu teste grátis</a></div>
+              <div class="text-center"><a href="#" class="buy-btn js-login-btn">Iniciar meu teste grátis</a></div>
             </div>
           </div><div class="col-lg-4 featured" data-aos="zoom-in" data-aos-delay="200">
             <div class="pricing-item">
@@ -996,16 +996,16 @@
       const modalLogin = document.getElementById('modalLogin');
       const btnClose = document.getElementById('closeLoginX');
       
-      // MUDANÇA: Seleciona TODOS os botões de login (Desktop e Mobile) pela classe
+      // MUDANÇA: Seleciona TODOS os botões de login/teste (Desktop e Mobile) pela classe
       // Adicionei a classe "js-login-btn" nos dois links no HTML
       const loginButtons = document.querySelectorAll('.js-login-btn');
 
       // Adiciona evento em todos os botões encontrados
-       // Adiciona evento em todos os botões encontrados
       loginButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.preventDefault(); 
           
+          // Se tiver um href válido diferente de #, vai para o link
           if(btn.getAttribute('href') !== '#' && btn.getAttribute('href')) {
              window.location.href = btn.getAttribute('href');
              return;
@@ -1014,7 +1014,8 @@
           // Abre o modal
           modalLogin.classList.remove('hidden');
 
-          // TRUQUE: Se o botão tiver texto de "Comprar", "Teste" ou "Assinar",
+          // LÓGICA INTELIGENTE:
+          // Se o botão tiver texto de "Comprar", "Teste" ou "Assinar",
           // já muda a visualização para CADASTRO automaticamente.
           const text = btn.innerText.toLowerCase();
           if(text.includes('teste') || text.includes('assinar') || text.includes('comprar') || text.includes('grátis')){
@@ -1025,16 +1026,6 @@
               document.getElementById('registerView').classList.add('hidden');
               document.getElementById('loginView').classList.remove('hidden');
           }
-
-          // Fecha menu mobile...
-          if(document.querySelector('.mobile-nav-active')){
-            document.querySelector('body').classList.remove('mobile-nav-active');
-            const toggle = document.querySelector('.mobile-nav-toggle');
-            if(toggle) toggle.classList.toggle('bi-list');
-            if(toggle) toggle.classList.toggle('bi-x');
-          }
-        });
-      });
 
           // Fecha o menu mobile se estiver aberto (melhoria de UX)
           if(document.querySelector('.mobile-nav-active')){
@@ -1193,8 +1184,9 @@
       if (user) {
         const allLoginBtns = document.querySelectorAll('.js-login-btn');
         allLoginBtns.forEach(btn => {
-          btn.innerText = "Ir para o Painel";
+          btn.innerText = "Central do Assinante";
           btn.href = "painel.html";
+          // Se já estiver logado, o link vira direto, sem modal
         });
       }
     });
