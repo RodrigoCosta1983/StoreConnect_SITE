@@ -1123,7 +1123,30 @@
             window.location.href = "painel.html";
         } catch (error) {
             console.error(error);
-            alert("Erro ao entrar: " + error.message);
+            
+            let msg = "Erro ao entrar.";
+
+            // TRADUÇÃO DOS ERROS NO SITE
+            switch (error.code) {
+                case 'auth/invalid-credential':
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                    msg = "E-mail ou senha incorretos.";
+                    break;
+                case 'auth/invalid-email':
+                    msg = "O formato do e-mail é inválido.";
+                    break;
+                case 'auth/user-disabled':
+                    msg = "Esta conta foi desativada.";
+                    break;
+                case 'auth/too-many-requests':
+                    msg = "Muitas tentativas falhas. Aguarde um pouco e tente novamente.";
+                    break;
+                default:
+                    msg = "Erro desconhecido: " + error.message;
+            }
+            
+            alert(msg);
             btn.innerText = "ENTRAR";
         }
     });
