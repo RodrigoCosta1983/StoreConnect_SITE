@@ -115,7 +115,7 @@
 
       <a class="btn-login js-login-btn" href="#" id="openLoginBtn">Central do Assinante</a>
 
-      <a class="btn-getstarted" href="https://play.google.com/store/apps/details?id=com.storeeconnect.app">Comprar</a>
+      <a class="btn-getstarted js-login-btn" href="#">Teste Grátis</a>
     </div>
   </header>
 
@@ -164,9 +164,7 @@
           <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
             <p>O melhor de tudo é que esse controle financeiro está totalmente integrado à gestão de estoque, ao registro de vendas da loja física e online e a todas as outras funcionalidades essenciais para o seu dia a dia. 
               Nosso propósito é transformar a gestão do seu varejo, tornando-a mais eficiente, segura e baseada em dados reais. Com o Store&Connect, você ganha a clareza para tomar as melhores decisões e a liberdade para focar no crescimento do seu negócio.</p>
-            <a href="https://play.google.com/store/apps/details?id=com.storeeconnect.app" class="read-more"><span>Experimente grátis por 30 dias</span><i class="bi bi-arrow-right"></i></a>
-          </div>
-
+            <div class="text-center"><a href="#" class="buy-btn js-login-btn">Iniciar meu teste grátis</a></div>
         </div>
 
       </div>
@@ -505,7 +503,7 @@
                 <li><i class=" "></i> <span>✅ Todas as futuras atualizações</span></li>
 
               </ul>
-              <div class="text-center"><a href="#" class="buy-btn">Comprar Agora</a></div>
+              <div class="text-center"><a href="#" class="buy-btn js-login-btn">Assinar Agora</a></div>
             </div>
           </div><div class="col-lg-4" data-aos="zoom-in" data-aos-delay="100">
             <div class="pricing-item">
@@ -1003,18 +1001,40 @@
       const loginButtons = document.querySelectorAll('.js-login-btn');
 
       // Adiciona evento em todos os botões encontrados
+       // Adiciona evento em todos os botões encontrados
       loginButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.preventDefault(); 
           
-          // Se já estiver logado (href diferente de #), vai para o link
-          if(btn.getAttribute('href') !== '#') {
+          if(btn.getAttribute('href') !== '#' && btn.getAttribute('href')) {
              window.location.href = btn.getAttribute('href');
              return;
           }
 
-          // Se não, abre o modal
+          // Abre o modal
           modalLogin.classList.remove('hidden');
+
+          // TRUQUE: Se o botão tiver texto de "Comprar", "Teste" ou "Assinar",
+          // já muda a visualização para CADASTRO automaticamente.
+          const text = btn.innerText.toLowerCase();
+          if(text.includes('teste') || text.includes('assinar') || text.includes('comprar') || text.includes('grátis')){
+              document.getElementById('loginView').classList.add('hidden');
+              document.getElementById('registerView').classList.remove('hidden');
+          } else {
+              // Se for "Login" ou "Central", mostra login
+              document.getElementById('registerView').classList.add('hidden');
+              document.getElementById('loginView').classList.remove('hidden');
+          }
+
+          // Fecha menu mobile...
+          if(document.querySelector('.mobile-nav-active')){
+            document.querySelector('body').classList.remove('mobile-nav-active');
+            const toggle = document.querySelector('.mobile-nav-toggle');
+            if(toggle) toggle.classList.toggle('bi-list');
+            if(toggle) toggle.classList.toggle('bi-x');
+          }
+        });
+      });
 
           // Fecha o menu mobile se estiver aberto (melhoria de UX)
           if(document.querySelector('.mobile-nav-active')){
