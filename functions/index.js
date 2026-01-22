@@ -71,7 +71,7 @@ exports.createPortalSession = onCall(async (request) => {
 
   const session = await stripe.billingPortal.sessions.create({
     customer: userData.stripeCustomerId,
-    return_url: 'https://rodrigocosta1983.github.io/StoreConnect/Appland/painel.html',
+    return_url: 'https://rodrigocosta1983.github.io/StoreConnect/painel.html',
   });
 
   return { url: session.url };
@@ -92,8 +92,8 @@ exports.createCheckoutSession = onCall(async (request) => {
       price: 'price_1SSTkgF7qAVyn13seqbN6xMN', // ID do seu PLANO R$ 25 (Vou confirmar se é esse mesmo)
       quantity: 1,
     }],
-    success_url: 'https://rodrigocosta1983.github.io/StoreConnect_SITE/Appland/painel.html?sucesso=true',
-    cancel_url: 'https://rodrigocosta1983.github.io/StoreConnect_SITE/Appland/painel.html',
+    success_url: 'https://rodrigocosta1983.github.io/StoreConnect_SITE/painel.html?sucesso=true',
+    cancel_url: 'https://rodrigocosta1983.github.io/StoreConnect_SITE/painel.html',
     client_reference_id: userId, // Importante: vincula o pagamento ao ID do usuário
     customer_email: userEmail,   // Já preenche o email no checkout
   });
