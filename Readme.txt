@@ -1,113 +1,80 @@
-<div align="center">
-  <br />
-  <img src="assets/img/icon2.png" alt="Logo Store & Connect" width="120">
-  <br />
-  <br />
+# Store & Connect - Sistema de Gestão para Lojas e Distribuidoras
 
-  <h1 align="center">Store & Connect</h1>
+![Status](https://img.shields.io/badge/Status-Em_Produção-2ea44f?style=for-the-badge)
+![Flutter](https://img.shields.io/badge/Flutter-3.0-02569B?style=for-the-badge&logo=flutter&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-Serverless-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+![Web](https://img.shields.io/badge/Web-GitHub_Pages-222222?style=for-the-badge&logo=github&logoColor=white)
 
-  <p align="center">
-    <strong>Gestão completa para lojas e distribuidoras.</strong><br>
-    PDV + Estoque + Financeiro + SaaS
-  </p>
-
-  <p align="center">
-    <img src="https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter">
-    <img src="https://img.shields.io/badge/Firebase-Serverless-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase">
-    <img src="https://img.shields.io/badge/Web-GitHub%20Pages-222222?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Pages">
-    <img src="https://img.shields.io/badge/Status-Em%20Produção-success?style=for-the-badge" alt="Status">
-  </p>
-
-  <br />
-
-  <a href="https://www.storeconnect.com.br">
-    <img src="https://img.shields.io/badge/🌐_Acessar_Site_Oficial-2f89fc?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Site Oficial">
-  </a>
-  &nbsp;
-  <a href="https://app.storeconnect.com.br">
-    <img src="https://img.shields.io/badge/📱_Acessar_Sistema_Web-4CAF50?style=for-the-badge&logo=pwa&logoColor=white" alt="Web App">
-  </a>
-  &nbsp;
-  <a href="https://play.google.com/store/apps/details?id=com.storeeconnect.app">
-    <img src="https://img.shields.io/badge/Google_Play-Baixar_Agora-FF0000?style=for-the-badge&logo=google-play&logoColor=white" alt="Google Play">
-  </a>
-
-  <br />
-  <br />
-</div>
-
-<hr />
-
-## 🚀 Sobre o Projeto
-
-**Store & Connect** é uma solução SaaS (Software as a Service) desenvolvida para modernizar o varejo. Diferente de sistemas complexos de desktop, entregamos o poder de um ERP na palma da mão ou no navegador.
-
-O projeto utiliza uma arquitetura **100% Serverless** (sem servidor fixo), combinando o poder do **Flutter** (Multiplataforma) com a escalabilidade do **Firebase** e a eficiência de custos do **GitHub Pages** para o site institucional.
+> **A clareza que seu negócio precisa para crescer.**
+> 
+> Sistema de gestão completo (PDV + Estoque + Financeiro) com arquitetura Serverless.
 
 ---
 
-## ✨ Funcionalidades Principais
+## 🔗 Links Oficiais
 
-<table>
-  <tr>
-    <td width="50%">
-      <h3>🛒 Para a Loja (PDV)</h3>
-      <ul>
-        <li><strong>Frente de Caixa Rápido:</strong> Venda em segundos pelo celular ou PC.</li>
-        <li><strong>Controle de Estoque:</strong> Baixa automática e alertas de nível crítico.</li>
-        <li><strong>Múltiplos Pagamentos:</strong> Dinheiro, Pix, Cartão e "Fiado" (Crédito).</li>
-        <li><strong>Leitor de Código de Barras:</strong> Use a câmera do celular.</li>
-      </ul>
-    </td>
-    <td width="50%">
-      <h3>📈 Gestão & Inteligência</h3>
-      <ul>
-        <li><strong>Dashboard em Tempo Real:</strong> Acompanhe o faturamento ao vivo.</li>
-        <li><strong>Controle de Fiado:</strong> Saiba exatamente quem te deve e quanto.</li>
-        <li><strong>Curva ABC:</strong> Descubra quais produtos geram mais lucro.</li>
-        <li><strong>Multi-Plataforma:</strong> Android, iOS e Web.</li>
-      </ul>
-    </td>
-  </tr>
-</table>
+| 🌐 Site Institucional | 📱 Sistema Web (App) | 🤖 Google Play |
+| :---: | :---: | :---: |
+| [**www.storeconnect.com.br**](https://www.storeconnect.com.br) | [**app.storeconnect.com.br**](https://app.storeconnect.com.br) | [**Baixar App Android**](https://play.google.com/store/apps/details?id=com.storeeconnect.app) |
 
 ---
 
-## 🛠️ Arquitetura & Tecnologias
+## 💻 Sobre o Projeto
 
-O diferencial deste projeto é a **Engenharia de Custos**. Mantemos uma operação profissional com custo fixo próximo de zero utilizando serviços gerenciados.
+**Store & Connect** é uma solução SaaS desenvolvida para modernizar o varejo. Diferente de sistemas legados complexos, entregamos o poder de um ERP na palma da mão ou no navegador.
 
-| Camada | Tecnologia | Função |
-| :--- | :--- | :--- |
-| **Frontend Mobile/Web** | ![Flutter](https://img.shields.io/badge/-Flutter-02569B?logo=flutter&logoColor=white) | Código único para App e Sistema Web. |
-| **Landing Page** | ![HTML5](https://img.shields.io/badge/-HTML5%20%2B%20Bootstrap-E34F26?logo=html5&logoColor=white) | Site institucional leve e responsivo. |
-| **Backend & Banco** | ![Firebase](https://img.shields.io/badge/-Firebase-FFCA28?logo=firebase&logoColor=black) | Auth, Firestore (NoSQL) e Storage. |
-| **Hospedagem** | ![GitHub Pages](https://img.shields.io/badge/-GitHub%20Pages-181717?logo=github&logoColor=white) | Hospedagem gratuita do site institucional. |
-| **Pagamentos** | ![Stripe](https://img.shields.io/badge/-Stripe-008CDD?logo=stripe&logoColor=white) | Gestão de Assinaturas e Webhooks. |
-| **Automação** | **FormSubmit** + **ImprovMX** | Gestão de formulários e e-mail corporativo. |
+O projeto utiliza uma arquitetura **100% Serverless**, garantindo alta escalabilidade e custo fixo otimizado.
 
----
+### ✨ Funcionalidades Principais
 
-## 📸 Visualização
+#### 🛒 Gestão de Vendas (PDV)
+* **Frente de Caixa Rápido:** Interface otimizada para vendas em segundos.
+* **Controle de Estoque em Tempo Real:** Baixa automática e bloqueio de venda sem saldo.
+* **Carrinho Flexível:** Venda para "Consumidor Final" ou clientes cadastrados.
+* **Múltiplos Pagamentos:** Suporte nativo para Pix, Cartão, Dinheiro e **Venda a Crédito (Fiado)**.
 
-<div align="center">
-  <img src="assets/img/home2.png" width="80%" alt="Preview do Site">
-  <br><br>
-  <p><em>Landing Page Institucional rodando no GitHub Pages</em></p>
-</div>
+#### 📈 Gestão Estratégica
+* **Dashboard Financeiro:** Acompanhe ticket médio, total vendido e contas a receber.
+* **Curva ABC:** Identifique automaticamente seus produtos mais lucrativos.
+* **CRM de Clientes:** Histórico de compras e gestão de inadimplência.
+* **Segurança:** Login biométrico e controle de acesso via Firebase Auth.
 
 ---
 
-<div align="center">
-  <br />
-  <p>Desenvolvido com ❤️ por <strong>Rodrigo Costa</strong></p>
-  <p>
-    <a href="https://www.linkedin.com/in/dev-rodrigo-costa/">
-      <img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white" alt="LinkedIn">
-    </a>
-    <a href="mailto:contato@storeconnect.com.br">
-      <img src="https://img.shields.io/badge/-Email-D14836?style=flat&logo=gmail&logoColor=white" alt="Email">
-    </a>
-  </p>
-  <br />
-</div>
+## 📸 Telas do Sistema
+
+| Tela de Venda (PDV) | Dashboard Financeiro | Segurança & Perfil |
+| :---: | :---: | :---: |
+| <img src="assets/img/home2.png" width="250"> | <img src="assets/img/dashboard.png" width="250"> | <img src="assets/img/relatorios.png" width="250"> |
+
+> *Imagens ilustrativas da versão Mobile e Web.*
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+O projeto foi construído seguindo os princípios do **Clean Architecture** e **JAMstack**.
+
+* **Frontend:** [Flutter](https://flutter.dev) (Código único para Android, iOS e Web).
+* **Backend:** [Firebase](https://firebase.google.com) (Firestore, Authentication, Storage).
+* **Landing Page:** HTML5 + Bootstrap 5 (Hospedado no GitHub Pages).
+* **Pagamentos:** [Stripe](https://stripe.com) (Gestão de Assinaturas Recorrentes).
+* **Automação:** FormSubmit + ImprovMX (Infraestrutura de e-mail sem servidor).
+
+---
+
+## 🚀 Como Executar Localmente
+
+```bash
+# 1. Clone este repositório
+git clone [https://github.com/RodrigoCosta1983/StoreConnect_SITE.git](https://github.com/RodrigoCosta1983/StoreConnect_SITE.git)
+
+# 2. Acesse a pasta do projeto
+cd StoreConnect_SITE
+
+# 3. Para o SITE (Landing Page):
+# Abra o arquivo index.html no seu navegador ou use o Live Server do VS Code.
+
+# 4. Para o APP (Flutter):
+# Certifique-se de ter o Flutter instalado e rode:
+flutter run
