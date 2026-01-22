@@ -85,4 +85,4 @@ Rodrigo Costa
 
 Desenvolvedor Fullstack & Fundador do Store & Connect
 
-<p align="center"> Feito com ❤️ e muito café ☕ no Rio de Janeiro. </p>
+<p> Feito com ❤️ e muito café ☕ no Rio de Janeiro. </p>
