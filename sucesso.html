@@ -109,7 +109,28 @@
 
   </main>
 
-  <footer id="footer" class="footer">
+   <footer id="footer" class="footer">
+
+    <div class="footer-newsletter">
+      <div class="container">
+        <div class="row justify-content-center text-center">
+          <div class="col-lg-6">
+            <h4>Newsletter</h4>
+            <p>Assine nossa newsletter e receba as últimas novidades sobre nossos produtos e serviços!</p>
+            <form action="https://formsubmit.co/contato@storeconnect.com.br" method="POST">
+              <input type="hidden" name="_next" value="https://www.storeconnect.com.br/">
+              <input type="hidden" name="_subject" value="Nova Inscrição na Newsletter">
+              
+              <div class="newsletter-form">
+                <input type="email" name="email" placeholder="Seu melhor e-mail" required>
+                <input type="submit" value="Inscrever-se">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="container footer-top">
       <div class="row gy-4">
         <div class="col-lg-4 col-md-6 footer-about">
@@ -119,7 +140,7 @@
           <div class="footer-contact pt-3">
             <p>Rio de Janeiro, RJ</p>
             <p class="mt-3"><strong>WhatsApp:</strong> <span>21-98505-0120</span></p>
-            <p><strong>Email:</strong> <span>contato@storeconnect.com.br</span></p>
+            <p><strong>Email:</strong> <span>contato@storeconect.com.br</span></p>
           </div>
         </div>
 
@@ -132,23 +153,499 @@
             <li><i class="bi bi-chevron-right"></i> <a href="exclusao_conta.html">Excluir Conta</a></li>
           </ul>
         </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Nossos Serviços</h4>
+          <ul>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Web Design</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Desenvolvimento Web</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Desenvolvimento Mobile</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="https://www.eritrium.com/br/index.html">ERP - CRM</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-4 col-md-12">
+          <h4>Siga-nos</h4>
+          <p>Nossas redes</p>
+          <div class="social-links d-flex">
+            <a href=""><i class="bi bi-twitter-x"></i></a>
+            <a href=""><i class="bi bi-facebook"></i></a>
+            <a href=""><i class="bi bi-instagram"></i></a>
+            <a href=""><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+
       </div>
     </div>
 
     <div class="container copyright text-center mt-4">
       <p>© <span>Copyright</span> <strong class="px-1 sitename">Store&Connect</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        Designed by <a href="https://storeconnect.com.br/">Store&Connect</a>
+      </div>
     </div>
+
   </footer>
 
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
+  <div id="preloader"></div>
+
+
+  <script>
+    //var url = 'https://cdn.waplus.io/waplus-crm/settings/ossembed.js';
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = true;
+    //s.src = url;
+    s.src = 'assets/js/ossembed.js';
+    var options = {
+    "enabled": true,
+    "chatButtonSetting": {
+    "backgroundColor": "#16BE45",
+    //"ctaText": "Envie-nos uma mensagem",
+    "ctaText": "",
+    "borderRadius": "8",
+    "marginLeft": "20",
+    "marginBottom": "100",
+    "marginRight": "20",
+    "position": "right",
+    "textColor": "#ffffff",
+    "phoneNumber": "5521985050120",
+    "messageText": "👋🏻Olá",
+    "trackClick": true
+    },
+    "brandSetting": {
+    "brandName": "Store&Connect",
+    "brandSubTitle": "Respostas em até 1 dia  \"Store&Connect\"",
+    "headerTextColor": "#fff",
+    "brandImg": "https://rodrigocosta1983.github.io/StoreConnect_SITE/assets/img/apple-touch-icon.png",
+    "welcomeText": "Oi! Em que posso ajudar?",
+    "messageText": "Olá, gostaria de tirar algumas dúvidas ",
+    "backgroundColor": "#0a5f54",
+    "ctaText": "Start Chat",
+    "borderRadius": "20",
+    "autoShow": false,
+    "btnColor": "#16BE45",
+    "phoneNumber": "5521985050120",
+    "trackClick": true
+    }
+    }
+    s.onload = function() {
+    CreateWhatsappChatWidget(options);
+    };
+    var x = document.getElementsByTagName('script')[0];
+    x.parentNode.insertBefore(s, x);
+  </script>
+
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script src="assets/js/main.js"></script>
 
-</body>
+  <div id="modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card" role="document">
+      <button id="closeX" class="close-btn" aria-label="Fechar">✕</button>
+      <div class="modal-head">
+        <div class="badge">30</div>
+        <div>
+          <h3 id="modal-title" class="title">🎉 Comece agora com 7 dias grátis!</h3>
+          <p class="subtitle">Teste todas as funcionalidades sem pagar nada no primeiro mês.</p>
+        </div>
+      </div>
 
+      <div class="modal-body">
+        Use sem limites, explore todos os recursos e veja como o app pode facilitar seu dia a dia. <strong>Não precisa de compromisso — cancele quando quiser.</strong>
+
+        <div class="cta-row">
+          <button id="ctaPrimary" class="btn btn-primary">Começar teste grátis</button>
+          <button id="ctaSecondary" class="btn btn-ghost">Agora não</button>
+        </div>
+
+        <p class="small-note">Ao clicar em "Começar teste grátis" você concorda com nossos <a href="#" style="color:var(--accent); text-decoration:none">termos</a>.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const modal = document.getElementById('modal');
+      const cta = document.getElementById('ctaPrimary');
+      const cancel = document.getElementById('ctaSecondary');
+      const closeX = document.getElementById('closeX');
+
+      // Acessibilidade: foco
+      const focusable = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+      const firstFocusable = () => modal.querySelectorAll(focusable)[0];
+      const focusableEls = () => modal.querySelectorAll(focusable);
+
+      // Show modal only if user hasn't dismissed before
+      const DISMISS_KEY = 'trial-popup-dismissed-v1';
+      if(localStorage.getItem(DISMISS_KEY) === 'true'){
+        modal.classList.add('hidden');
+        return;
+      }
+
+      // Set initial focus
+      window.addEventListener('load', ()=> setTimeout(()=> firstFocusable().focus(), 3000));
+
+      // CTA: redireciona para página de cadastro / download
+      cta.addEventListener('click', ()=>{
+        // personalizado: altere a URL abaixo para a página de inscrição/loja
+        window.location.href = 'https://play.google.com/store/apps/details?id=com.storeeconnect.app';
+      });
+
+      // Cancel / Close: oculta e não mostrar de novo por 7 dias
+      function dismiss(){
+        modal.classList.add('hidden');
+        localStorage.setItem(DISMISS_KEY, 'true');
+        // opcional: para mostrar novamente depois de 7 dias, use:
+        // const until = Date.now() + 7*24*60*60*1000; localStorage.setItem(DISMISS_KEY, until);
+      }
+      cancel.addEventListener('click', dismiss);
+      closeX.addEventListener('click', dismiss);
+
+      // ESC para fechar
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape') dismiss();
+      });
+
+      // Clique fora para fechar
+      modal.addEventListener('click', (e)=>{
+        if(e.target === modal) dismiss();
+      });
+
+      // simples trap de foco dentro do modal
+      modal.addEventListener('keydown', (e)=>{
+        if(e.key !== 'Tab') return;
+        const nodes = Array.from(focusableEls());
+        if(nodes.length === 0) return;
+        const idx = nodes.indexOf(document.activeElement);
+        if(e.shiftKey && idx === 0){ nodes[nodes.length-1].focus(); e.preventDefault(); }
+        else if(!e.shiftKey && idx === nodes.length-1){ nodes[0].focus(); e.preventDefault(); }
+      });
+
+    })();
+  </script>
+
+  <div id="modalLogin" class="modal-overlay hidden" style="z-index: 10000;">
+    <div class="app-card">
+      <button id="closeLoginX" class="close-btn-app">✕</button>
+
+      <div id="loginView">
+        <img src="assets/img/icon2.png" alt="Logo" class="app-logo">
+        <h3 class="app-title">Bem-vindo de volta!</h3>
+        <p class="app-subtitle">Faça login para gerenciar seu negócio.</p>
+
+        <form id="formLoginApp">
+          <div class="app-input-group">
+            <label class="app-input-label">E-mail</label>
+            <div class="app-input-wrapper">
+              <i class="bi bi-envelope app-icon"></i>
+              <input type="email" class="app-input" id="loginEmail" placeholder="seu@email.com" required>
+            </div>
+          </div>
+
+          <div class="app-input-group">
+            <label class="app-input-label">Senha</label>
+            <div class="app-input-wrapper">
+              <i class="bi bi-lock app-icon"></i>
+              <input type="password" class="app-input" id="loginPass" placeholder="••••••••" required>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; font-size:13px;">
+            <label style="display:flex; align-items:center; gap:5px; color:#666;">
+              <input type="checkbox"> Lembrar dados
+            </label>
+            <a href="#" class="app-link" style="font-size:13px;">Esqueci a senha</a>
+          </div>
+
+          <button type="submit" class="btn-app-primary">ENTRAR</button>
+        </form>
+
+        <div style="display:flex; align-items:center; gap:10px; color:#ccc; font-size:12px;">
+          <div style="flex:1; height:1px; background:#eee;"></div>
+          ou
+          <div style="flex:1; height:1px; background:#eee;"></div>
+        </div>
+
+        <button type="button" class="btn-app-google" id="googleLoginBtn">
+            <svg width="18" height="18" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+            </svg>
+            Continuar com Google
+        </button>
+
+        <p class="app-footer-text">
+          Ainda não tem uma conta? <a id="linkToRegister" class="app-link">Cadastre-se</a>
+        </p>
+      </div>
+
+      <div id="registerView" class="hidden">
+        <img src="assets/img/icon2.png" alt="Logo" class="app-logo">
+        <h3 class="app-title">Crie sua conta</h3>
+        <p class="app-subtitle">Comece a gerenciar seu negócio hoje.</p>
+
+        <form id="formRegisterApp">
+          <div class="app-input-group">
+            <label class="app-input-label">E-mail</label>
+            <div class="app-input-wrapper">
+              <i class="bi bi-envelope app-icon"></i>
+              <input type="email" class="app-input" id="regEmail" placeholder="seu@email.com" required>
+            </div>
+          </div>
+
+          <div class="app-input-group">
+            <label class="app-input-label">Senha</label>
+            <div class="app-input-wrapper">
+              <i class="bi bi-lock app-icon"></i>
+              <input type="password" class="app-input" id="regPass" placeholder="Crie uma senha forte" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-app-primary">CRIAR CONTA</button>
+        </form>
+
+        <p class="app-footer-text">
+          Já tem uma conta? <a id="linkToLogin" class="app-link">Fazer Login</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      // Elementos do Login
+      const modalLogin = document.getElementById('modalLogin');
+      const btnClose = document.getElementById('closeLoginX');
+      
+      // MUDANÇA: Seleciona TODOS os botões de login/teste (Desktop e Mobile) pela classe
+      // Adicionei a classe "js-login-btn" nos dois links no HTML
+      const loginButtons = document.querySelectorAll('.js-login-btn');
+
+      // Adiciona evento em todos os botões encontrados
+      loginButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault(); 
+          
+          // Se tiver um href válido diferente de #, vai para o link
+          if(btn.getAttribute('href') !== '#' && btn.getAttribute('href')) {
+             window.location.href = btn.getAttribute('href');
+             return;
+          }
+
+          // Abre o modal
+          modalLogin.classList.remove('hidden');
+
+          // LÓGICA INTELIGENTE:
+          // Se o botão tiver texto de "Comprar", "Teste" ou "Assinar",
+          // já muda a visualização para CADASTRO automaticamente.
+          const text = btn.innerText.toLowerCase();
+          if(text.includes('teste') || text.includes('assinar') || text.includes('comprar') || text.includes('grátis')){
+              document.getElementById('loginView').classList.add('hidden');
+              document.getElementById('registerView').classList.remove('hidden');
+          } else {
+              // Se for "Login" ou "Central", mostra login
+              document.getElementById('registerView').classList.add('hidden');
+              document.getElementById('loginView').classList.remove('hidden');
+          }
+
+          // Fecha o menu mobile se estiver aberto (melhoria de UX)
+          if(document.querySelector('.mobile-nav-active')){
+            document.querySelector('body').classList.remove('mobile-nav-active');
+            const toggle = document.querySelector('.mobile-nav-toggle');
+            if(toggle) toggle.classList.toggle('bi-list');
+            if(toggle) toggle.classList.toggle('bi-x');
+          }
+        });
+      });
+
+      // Fechar Modal (X)
+      if(btnClose){
+        btnClose.addEventListener('click', () => {
+          modalLogin.classList.add('hidden');
+        });
+      }
+
+      // Fechar clicando fora
+      window.addEventListener('click', (e) => {
+        if (e.target === modalLogin) {
+          modalLogin.classList.add('hidden');
+        }
+      });
+      
+      const form = document.getElementById('loginForm');
+      if(form){
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          // Lógica tratada no script do Firebase abaixo
+        });
+      }
+
+    })();
+  </script>
+
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithPopup, 
+      GoogleAuthProvider, 
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword, // Importante para cadastro
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    
+    // Importar Firestore para salvar o usuário novo
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXvWxIcts2Nd8QW-prkD3rJHKxqMIyzUg",
+      authDomain: "store-connect-app.firebaseapp.com",
+      projectId: "store-connect-app",
+      storageBucket: "store-connect-app.firebasestorage.app",
+      messagingSenderId: "294766590074",
+      appId: "1:294766590074:web:fbe25231b8ef11d8afe3c3",
+      measurementId: "G-KYVFYLZHSQ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app); // Inicializa o banco
+    const provider = new GoogleAuthProvider();
+
+    // --- LÓGICA DE INTERFACE (Trocar Login <-> Cadastro) ---
+    const loginView = document.getElementById('loginView');
+    const registerView = document.getElementById('registerView');
+    const linkToRegister = document.getElementById('linkToRegister');
+    const linkToLogin = document.getElementById('linkToLogin');
+
+    // Botão "Cadastre-se"
+    linkToRegister.addEventListener('click', () => {
+        loginView.classList.add('hidden');
+        registerView.classList.remove('hidden');
+    });
+
+    // Botão "Fazer Login"
+    linkToLogin.addEventListener('click', () => {
+        registerView.classList.add('hidden');
+        loginView.classList.remove('hidden');
+    });
+
+    // --- 1. LOGIN (Igual ao antigo, só mudou IDs) ---
+    const formLogin = document.getElementById('formLoginApp');
+    formLogin.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const pass = document.getElementById('loginPass').value;
+        const btn = formLogin.querySelector('button');
+
+        try {
+            btn.innerText = "Entrando...";
+            await signInWithEmailAndPassword(auth, email, pass);
+            window.location.href = "painel.html";
+        } catch (error) {
+            console.error(error);
+            
+            let msg = "Erro ao entrar.";
+
+            // TRADUÇÃO DOS ERROS NO SITE
+            switch (error.code) {
+                case 'auth/invalid-credential':
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                    msg = "E-mail ou senha incorretos.";
+                    break;
+                case 'auth/invalid-email':
+                    msg = "O formato do e-mail é inválido.";
+                    break;
+                case 'auth/user-disabled':
+                    msg = "Esta conta foi desativada.";
+                    break;
+                case 'auth/too-many-requests':
+                    msg = "Muitas tentativas falhas. Aguarde um pouco e tente novamente.";
+                    break;
+                default:
+                    msg = "Erro desconhecido: " + error.message;
+            }
+            
+            alert(msg);
+            btn.innerText = "ENTRAR";
+        }
+    });
+
+    // --- 2. CADASTRO (A novidade!) ---
+    const formRegister = document.getElementById('formRegisterApp');
+    formRegister.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('regEmail').value;
+        const pass = document.getElementById('regPass').value;
+        const btn = formRegister.querySelector('button');
+
+        try {
+            btn.innerText = "Criando conta...";
+            
+            // 1. Cria no Authentication
+            const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+            const user = userCredential.user;
+
+            // 2. Salva no Firestore (CRUCIAL para o pagamento funcionar depois)
+            await setDoc(doc(db, "users", user.uid), {
+                email: email,
+                createdAt: new Date(),
+                subscriptionStatus: "inactive" // Começa inativo até pagar
+            });
+
+            console.log("Conta criada com sucesso!");
+            // Redireciona para o painel (onde ele verá que precisa pagar)
+            window.location.href = "painel.html";
+
+        } catch (error) {
+            console.error(error);
+            let msg = "Erro ao criar conta.";
+            if(error.code === 'auth/email-already-in-use') msg = "Este e-mail já está cadastrado.";
+            if(error.code === 'auth/weak-password') msg = "A senha deve ter pelo menos 6 caracteres.";
+            alert(msg);
+            btn.innerText = "CRIAR CONTA";
+        }
+    });
+
+    // --- 3. GOOGLE LOGIN ---
+    const googleBtn = document.getElementById('googleLoginBtn');
+    if(googleBtn){
+        googleBtn.addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                // Se for novo usuário, o Firestore deveria ser criado também, 
+                // mas vamos assumir que o fluxo principal lida com isso depois ou usamos Cloud Functions
+                window.location.href = "painel.html";
+            } catch (error) {
+                alert("Erro Google: " + error.message);
+            }
+        });
+    }
+
+    // --- 4. VERIFICAÇÃO DE LOGIN ---
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const allLoginBtns = document.querySelectorAll('.js-login-btn');
+        allLoginBtns.forEach(btn => {
+          btn.innerText = "Central do Assinante";
+          btn.href = "painel.html";
+          // Se já estiver logado, o link vira direto, sem modal
+        });
+      }
+    });
+  </script>
+
+  </body>
 </html>
