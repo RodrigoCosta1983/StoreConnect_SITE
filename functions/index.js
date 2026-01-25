@@ -1,102 +1,135 @@
-const { onRequest } = require("firebase-functions/v2/https");
-const { onCall, HttpsError } = require("firebase-functions/v2/https");
-const admin = require("firebase-admin");
-// SUA CHAVE SECRETA DO STRIPE
-const stripe = require("stripe")("sk_test_51RtadZF7qAVyn13sMeQ2Seal39Ms1uJnMfL7eibWBqp7TrsPZWFVIEjkR3pSLY9DdNmQtfAOe5r6NZZKwZzTmJ2U006uU487KD");
+// --- IMPORTS ---
+// V1 para a função HTTPS (Asaas)
+const functions = require('firebase-functions');
+// V2 para a função do Firestore (Limpeza de Produtos)
+const { onDocumentDeleted } = require("firebase-functions/v2/firestore");
+
+const admin = require('firebase-admin');
+const axios = require("axios");
+const cors = require("cors")({ origin: true });
 
 admin.initializeApp();
 
-// 1. WEBHOOK (Ouve quando o pagamento cai)
-exports.stripeWebhook = onRequest(async (req, res) => {
-  const signature = req.headers["stripe-signature"];
-  const endpointSecret = "whsec_VBOzucP5DbsbUAZMOrhuXZEt0RY9qfRR"; // Seu segredo do webhook
+// --- CONFIGURAÇÃO DO ASAAS ---
+const ASAAS_URL = "https://www.asaas.com/api/v3";
+// Se quiser usar o Sandbox (teste) do Asaas, mude a URL para: https://sandbox.asaas.com/api/v3
 
-  let event;
+/**
+ * 1. FUNÇÃO: createAsaasSubscription (Sintaxe V1 - HTTPS)
+ * Objetivo: Cria o cliente e a assinatura no Asaas
+ */
+exports.createAsaasSubscription = functions.https.onCall(async (data, context) => {
+  // --- CORREÇÃO AQUI: Usando variável de ambiente (.env) ---
+  const ASAAS_API_KEY = process.env.ASAAS_API_KEY; 
+
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "Usuário não logado.");
+  }
+
+  const { cpfCnpj, name, phone, email } = data;
+  const userId = context.auth.uid;
+
+  const headers = {
+    "access_token": ASAAS_API_KEY,
+    "Content-Type": "application/json"
+  };
 
   try {
-    event = stripe.webhooks.constructEvent(req.rawBody, signature, endpointSecret);
-  } catch (err) {
-    console.error(`⚠️ Webhook signature verification failed.`, err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    console.log(`[Asaas] Iniciando assinatura para: ${email} | CPF: ${cpfCnpj}`);
+
+    // A: Verificar se cliente existe
+    const searchResponse = await axios.get(`${ASAAS_URL}/customers?cpfCnpj=${cpfCnpj}`, { headers });
+    
+    let customerId;
+
+    if (searchResponse.data.data && searchResponse.data.data.length > 0) {
+      customerId = searchResponse.data.data[0].id;
+      console.log(`[Asaas] Cliente encontrado: ${customerId}`);
+    } else {
+      // B: Criar cliente novo
+      const createResponse = await axios.post(`${ASAAS_URL}/customers`, {
+        name: name,
+        email: email,
+        cpfCnpj: cpfCnpj,
+        phone: phone || "",
+        externalReference: userId,
+        notificationDisabled: false,
+      }, { headers });
+      customerId = createResponse.data.id;
+      console.log(`[Asaas] Novo cliente criado: ${customerId}`);
+    }
+
+    // C: Criar Assinatura (R$ 29,90)
+    const subscriptionResponse = await axios.post(`${ASAAS_URL}/subscriptions`, {
+      customer: customerId,
+      billingType: "UNDEFINED", // Cliente escolhe a forma de pagamento
+      value: 29.90,
+      nextDueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      cycle: "MONTHLY",
+      description: "Assinatura Store Connect Pro",
+      externalReference: userId
+    }, { headers });
+
+    console.log("[Asaas] Assinatura criada com sucesso!");
+
+    return {
+      success: true,
+      paymentUrl: subscriptionResponse.data.billUrl,
+      subscriptionId: subscriptionResponse.data.id
+    };
+
+  } catch (error) {
+    console.error("[Asaas] Erro:", error.response ? error.response.data : error.message);
+    throw new functions.https.HttpsError("internal", "Erro Asaas", error.response ? error.response.data : error.message);
   }
+});
 
-  // Evento de "Checkout Completado" (Alguém pagou!)
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object;
-    const userId = session.client_reference_id; // ID do usuário que mandamos no checkout
-    const customerId = session.customer;
-    const subscriptionId = session.subscription;
+/**
+ * 2. FUNÇÃO: onProductDelete (Sintaxe V2 - Firestore)
+ * Objetivo: Limpa a imagem quando produto é deletado.
+ */
+exports.onProductDelete = onDocumentDeleted(
+  "stores/{storeId}/products/{productId}",
+  async (event) => {
+    const deletedData = event.data && event.data.data();
+    
+    if (!deletedData) {
+      console.log("Nenhum dado encontrado no evento de deleção.");
+      return;
+    }
 
-    if (userId) {
-      try {
-        console.log(`💰 Pagamento confirmado para: ${userId}`);
-        
-        // Salva os dados no usuário
-        await admin.firestore().collection("users").doc(userId).set({
-            stripeCustomerId: customerId, 
-            activeSubscriptionId: subscriptionId,
-            subscriptionStatus: "active" // Libera o acesso!
-        }, { merge: true });
+    let imageRefValue = deletedData.imagePath ?? deletedData.imageUrl ?? null;
+    if (!imageRefValue) return;
 
-        // Se tiver loja vinculada, libera também
-        const userDoc = await admin.firestore().collection("users").doc(userId).get();
-        if (userDoc.exists && userDoc.data().storeId) {
-            // ISSO AQUI É O QUE DESBLOQUEIA O APP DO CLIENTE ANTIGO
-            await admin.firestore().collection("stores").doc(userDoc.data().storeId).update({
-                subscriptionStatus: "active",
-                subscriptionId: subscriptionId,
-                lastPaymentDate: admin.firestore.FieldValue.serverTimestamp()
-            });
-        }
-      } catch (error) {
-        console.error("❌ Erro Firestore:", error);
+    const bucket = admin.storage().bucket();
+    let filePath = null;
+
+    try {
+      if (String(imageRefValue).startsWith('gs://')) {
+        filePath = String(imageRefValue).replace(/^gs:\/\/[^\/]+\/?/, '');
+      } else if (String(imageRefValue).startsWith('http')) {
+        try {
+          const url = new URL(String(imageRefValue));
+          const m = url.pathname.match(/\/o\/([^?]+)/);
+          if (m && m[1]) filePath = decodeURIComponent(m[1]);
+        } catch (err) { console.warn(err); }
+      } else {
+        filePath = String(imageRefValue);
       }
+
+      if (!filePath) return;
+
+      const file = bucket.file(filePath);
+      const [exists] = await file.exists();
+      if (exists) {
+        await file.delete();
+        console.log(`[onProductDelete] Imagem deletada: ${filePath}`);
+      }
+      
+      return;
+    } catch (error) {
+      console.error(`Erro ao deletar imagem:`, error);
+      return;
     }
   }
-  res.json({received: true});
-});
-
-// 2. PORTAL (Para quem JÁ paga - ver faturas, cancelar)
-exports.createPortalSession = onCall(async (request) => {
-  if (!request.auth) throw new HttpsError('unauthenticated', 'Usuário não logado.');
-
-  const userId = request.auth.uid;
-  const db = admin.firestore();
-  const userDoc = await db.collection('users').doc(userId).get();
-  const userData = userDoc.data();
-  
-  if (!userData || !userData.stripeCustomerId) {
-    throw new HttpsError('failed-precondition', 'Nenhuma assinatura encontrada.');
-  }
-
-  const session = await stripe.billingPortal.sessions.create({
-    customer: userData.stripeCustomerId,
-    return_url: 'https://rodrigocosta1983.github.io/StoreConnect/painel.html',
-  });
-
-  return { url: session.url };
-});
-
-// 3. CHECKOUT (NOVO! Para quem vai assinar agora)
-exports.createCheckoutSession = onCall(async (request) => {
-  if (!request.auth) throw new HttpsError('unauthenticated', 'Usuário não logado.');
-
-  const userId = request.auth.uid;
-  const userEmail = request.auth.token.email; // Pega o email do login
-
-  // Cria a sessão de pagamento
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    mode: 'subscription',
-    line_items: [{
-      price: 'price_1SSTkgF7qAVyn13seqbN6xMN', // ID do seu PLANO R$ 25 (Vou confirmar se é esse mesmo)
-      quantity: 1,
-    }],
-    success_url: 'https://rodrigocosta1983.github.io/StoreConnect_SITE/painel.html?sucesso=true',
-    cancel_url: 'https://rodrigocosta1983.github.io/StoreConnect_SITE/painel.html',
-    client_reference_id: userId, // Importante: vincula o pagamento ao ID do usuário
-    customer_email: userEmail,   // Já preenche o email no checkout
-  });
-
-  return { url: session.url };
-});
+);
