@@ -16,60 +16,86 @@ function cleanCpfCnpj(value) {
     return value.replace(/\D/g, '');
 }
 
-// --- 1. FUNÇÃO DE CRIAR ASSINATURA (Versão Híbrida) ---
+// --- 1. FUNÇÃO DE CRIAR ASSINATURA (Versão Híbrida e Inteligente) ---
 exports.createAsaasSubscription = onCall({ timeoutSeconds: 120 }, async (request) => {
-  console.log(">>> INICIANDO ASSINATURA (HÍBRIDA) <<<");
+  console.log(">>> INICIANDO ASSINATURA (HÍBRIDA V2) <<<");
 
   const ASAAS_API_KEY = process.env.ASAAS_API_KEY; 
 
   if (!request.auth) throw new HttpsError("unauthenticated", "Usuário não logado.");
 
-  // Limpeza de CPF para evitar duplicidade
+  // 1. Prepara os dados
   const cpfCnpj = cleanCpfCnpj(request.data.cpfCnpj);
-  const { name, phone, email } = request.data;
+  const { name, email, phone } = request.data;
   const userId = request.auth.uid;
   
   const headers = { "access_token": ASAAS_API_KEY, "Content-Type": "application/json" };
 
+  // 2. Monta o objeto do cliente SEM campos vazios (Isso resolve o erro 400 do telefone)
+  const customerData = {
+    name: name,
+    email: email,
+    cpfCnpj: cpfCnpj,
+    externalReference: userId
+  };
+  // Só adiciona telefone se tiver pelo menos 10 dígitos (evita erro de string vazia)
+  if (phone && phone.replace(/\D/g, '').length >= 10) {
+      customerData.phone = phone;
+      customerData.mobilePhone = phone;
+  }
+
+  console.log(`Processando cliente: ${name} (${cpfCnpj})`);
+
   try {
     // A. Busca ou Cria Cliente
     let customerId;
-    const search = await axios.get(`${ASAAS_URL}/customers?cpfCnpj=${cpfCnpj}`, { headers });
     
-    if (search.data.data && search.data.data.length > 0) {
-      customerId = search.data.data[0].id;
-      console.log(`Cliente encontrado: ${customerId}`);
-    } else {
-      const create = await axios.post(`${ASAAS_URL}/customers`, {
-        name, email, cpfCnpj, phone, externalReference: userId
-      }, { headers });
-      customerId = create.data.id;
-      console.log(`Cliente criado: ${customerId}`);
+    try {
+        const search = await axios.get(`${ASAAS_URL}/customers?cpfCnpj=${cpfCnpj}`, { headers });
+        if (search.data.data && search.data.data.length > 0) {
+            customerId = search.data.data[0].id;
+            console.log(`Cliente encontrado: ${customerId}`);
+        } else {
+            const create = await axios.post(`${ASAAS_URL}/customers`, customerData, { headers });
+            customerId = create.data.id;
+            console.log(`Cliente criado: ${customerId}`);
+        }
+    } catch (apiError) {
+        // Captura erro específico da criação do cliente (ex: email inválido, telefone ruim)
+        const asaasError = apiError.response?.data?.errors?.[0]?.description || apiError.message;
+        console.error("Erro ao criar/buscar cliente no Asaas:", JSON.stringify(apiError.response?.data));
+        throw new HttpsError("invalid-argument", `Erro no cadastro Asaas: ${asaasError}`);
     }
 
     // B. Cria Assinatura (PIX)
-    const subResponse = await axios.post(`${ASAAS_URL}/subscriptions`, {
-      customer: customerId,
-      billingType: "UNDEFINED", 
-      value: 0.90,
-      nextDueDate: new Date().toISOString().split('T')[0], // HOJE
-      cycle: "MONTHLY",
-      description: "Assinatura Store Connect Pro",
-      externalReference: userId
-    }, { headers });
+    let subscriptionId;
+    try {
+        const subResponse = await axios.post(`${ASAAS_URL}/subscriptions`, {
+            customer: customerId,
+            billingType: "UNDEFINED", 
+            value: 15.90,
+            nextDueDate: new Date().toISOString().split('T')[0], // HOJE
+            cycle: "MONTHLY",
+            description: "Assinatura Store Connect Pro",
+            externalReference: userId
+        }, { headers });
+        subscriptionId = subResponse.data.id;
+    } catch (subError) {
+        const msg = subError.response?.data?.errors?.[0]?.description || subError.message;
+        console.error("Erro ao criar assinatura:", JSON.stringify(subError.response?.data));
+        throw new HttpsError("invalid-argument", `Erro na assinatura: ${msg}`);
+    }
 
-    const subscriptionId = subResponse.data.id;
-    console.log(`Assinatura ${subscriptionId} criada. Iniciando caça ao link...`);
+    console.log(`Assinatura ${subscriptionId} criada. Buscando link...`);
 
     // C. BUSCA O LINK (Estratégia Híbrida)
     let finalPaymentLink = null;
     
-    // Tenta por 60 segundos
     for (let i = 1; i <= 40; i++) {
         try {
             let foundPayment = null;
 
-            // TENTATIVA 1: Busca pela Assinatura (O ideal)
+            // Tenta Assinatura
             const subSearch = await axios.get(
                 `${ASAAS_URL}/payments?subscription=${subscriptionId}&limit=1`, 
                 { headers }
@@ -78,7 +104,7 @@ exports.createAsaasSubscription = onCall({ timeoutSeconds: 120 }, async (request
             if (subSearch.data.data && subSearch.data.data.length > 0) {
                 foundPayment = subSearch.data.data[0];
             } 
-            // TENTATIVA 2: Busca pelo Cliente (O salvador da pátria)
+            // Tenta Cliente (Fallback rápido)
             else {
                 const custSearch = await axios.get(
                     `${ASAAS_URL}/payments?customer=${customerId}&status=PENDING&limit=1&sort=dateCreated&order=desc`, 
@@ -89,18 +115,14 @@ exports.createAsaasSubscription = onCall({ timeoutSeconds: 120 }, async (request
                 }
             }
 
-            // Se achou em qualquer um dos dois...
             if (foundPayment) {
-                // Tenta pegar billUrl (boleto/pix) ou invoiceUrl (fatura)
                 finalPaymentLink = foundPayment.billUrl || foundPayment.invoiceUrl;
                 console.log(`✅ Link encontrado na tentativa ${i}: ${finalPaymentLink}`);
                 break; 
             }
-
         } catch (e) {
-            console.warn(`Tentativa ${i} falhou, tentando novamente...`);
+            console.warn(`Tentativa ${i} falhou...`);
         }
-        
         await delay(1500); 
     }
 
@@ -116,17 +138,17 @@ exports.createAsaasSubscription = onCall({ timeoutSeconds: 120 }, async (request
 
   } catch (error) {
     console.error("Erro Fatal:", error);
-    throw new HttpsError("internal", error.message);
+    // Repassa o erro detalhado para o App Flutter
+    throw new HttpsError(error.code || "internal", error.message);
   }
 });
 
-// --- 2. WEBHOOK (Essencial para liberar o app após pagar) ---
+// --- 2. WEBHOOK ---
 exports.asaasWebhook = onRequest(async (req, res) => {
     if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
 
     const event = req.body.event;
     const payment = req.body.payment || {};
-    // Tenta achar o ID do usuário em vários lugares
     const userId = payment.externalReference || req.body.subscription?.externalReference;
 
     console.log(`[Webhook] Evento: ${event} | User: ${userId}`);
@@ -143,7 +165,6 @@ exports.asaasWebhook = onRequest(async (req, res) => {
                 lastPaymentDate: admin.firestore.FieldValue.serverTimestamp(),
                 subscriptionId: payment.subscription || null
             });
-            console.log(`>>> USUÁRIO ${userId} ATIVADO!`);
         } 
         else if (event === "PAYMENT_OVERDUE" || event === "SUBSCRIPTION_DELETED") {
             await docRef.update({ subscriptionStatus: "inactive" });
@@ -155,7 +176,7 @@ exports.asaasWebhook = onRequest(async (req, res) => {
     }
 });
 
-// --- 3. Limpeza de Imagens (Mantido) ---
+// --- 3. Limpeza ---
 exports.onProductDelete = onDocumentDeleted("stores/{storeId}/products/{productId}", async (event) => {
     const deletedData = event.data && event.data.data();
     if (!deletedData) return;
