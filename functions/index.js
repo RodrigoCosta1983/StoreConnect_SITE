@@ -10,141 +10,108 @@ const ASAAS_URL = "https://www.asaas.com/api/v3";
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-// Função para limpar CPF (deixa só números)
 function cleanCpfCnpj(value) {
     if (!value) return "";
     return value.replace(/\D/g, '');
 }
 
-// --- 1. FUNÇÃO DE CRIAR ASSINATURA (Versão Híbrida e Inteligente) ---
+// --- 1. FUNÇÃO DE CRIAR ASSINATURA (Versão V6 - Com Nome e Telefone) ---
 exports.createAsaasSubscription = onCall({ timeoutSeconds: 120 }, async (request) => {
-  console.log(">>> INICIANDO ASSINATURA (HÍBRIDA V2) <<<");
-
+  console.log(">>> INICIANDO ASSINATURA (TRIAL 7 DIAS - V7 - SAVE LINK) <<<");
   const ASAAS_API_KEY = process.env.ASAAS_API_KEY; 
-
   if (!request.auth) throw new HttpsError("unauthenticated", "Usuário não logado.");
 
-  // 1. Prepara os dados
   const cpfCnpj = cleanCpfCnpj(request.data.cpfCnpj);
-  const { name, email, phone } = request.data;
-  const userId = request.auth.uid;
+  const { name, email, phone } = request.data; 
   
+  if (!cpfCnpj || cpfCnpj.length < 11) throw new HttpsError("invalid-argument", "CPF inválido.");
+
+  const userId = request.auth.uid;
+  const trialDate = new Date();
+  trialDate.setDate(trialDate.getDate() + 7);
+  const nextDueDate = trialDate.toISOString().split('T')[0];
   const headers = { "access_token": ASAAS_API_KEY, "Content-Type": "application/json" };
 
-  // 2. Monta o objeto do cliente SEM campos vazios (Isso resolve o erro 400 do telefone)
   const customerData = {
-    name: name,
-    email: email,
-    cpfCnpj: cpfCnpj,
-    externalReference: userId
+    name: name, email: email, cpfCnpj: cpfCnpj, phone: phone, mobilePhone: phone, externalReference: userId
   };
-  // Só adiciona telefone se tiver pelo menos 10 dígitos (evita erro de string vazia)
-  if (phone && phone.replace(/\D/g, '').length >= 10) {
-      customerData.phone = phone;
-      customerData.mobilePhone = phone;
-  }
-
-  console.log(`Processando cliente: ${name} (${cpfCnpj})`);
 
   try {
-    // A. Busca ou Cria Cliente
+    // 1. Cliente Asaas
     let customerId;
-    
-    try {
-        const search = await axios.get(`${ASAAS_URL}/customers?cpfCnpj=${cpfCnpj}`, { headers });
-        if (search.data.data && search.data.data.length > 0) {
-            customerId = search.data.data[0].id;
-            console.log(`Cliente encontrado: ${customerId}`);
-        } else {
-            const create = await axios.post(`${ASAAS_URL}/customers`, customerData, { headers });
-            customerId = create.data.id;
-            console.log(`Cliente criado: ${customerId}`);
-        }
-    } catch (apiError) {
-        // Captura erro específico da criação do cliente (ex: email inválido, telefone ruim)
-        const asaasError = apiError.response?.data?.errors?.[0]?.description || apiError.message;
-        console.error("Erro ao criar/buscar cliente no Asaas:", JSON.stringify(apiError.response?.data));
-        throw new HttpsError("invalid-argument", `Erro no cadastro Asaas: ${asaasError}`);
+    const search = await axios.get(`${ASAAS_URL}/customers?cpfCnpj=${cpfCnpj}`, { headers });
+    if (search.data.data && search.data.data.length > 0) {
+        customerId = search.data.data[0].id;
+        await axios.put(`${ASAAS_URL}/customers/${customerId}`, customerData, { headers });
+    } else {
+        const create = await axios.post(`${ASAAS_URL}/customers`, customerData, { headers });
+        customerId = create.data.id;
     }
 
-    // B. Cria Assinatura (PIX)
-    let subscriptionId;
-    try {
-        const subResponse = await axios.post(`${ASAAS_URL}/subscriptions`, {
-            customer: customerId,
-            billingType: "UNDEFINED", 
-            value: 15.90,
-            nextDueDate: new Date().toISOString().split('T')[0], // HOJE
-            cycle: "MONTHLY",
-            description: "Assinatura Store Connect Pro",
-            externalReference: userId
-        }, { headers });
-        subscriptionId = subResponse.data.id;
-    } catch (subError) {
-        const msg = subError.response?.data?.errors?.[0]?.description || subError.message;
-        console.error("Erro ao criar assinatura:", JSON.stringify(subError.response?.data));
-        throw new HttpsError("invalid-argument", `Erro na assinatura: ${msg}`);
-    }
+    // 2. Assinatura
+    const subResponse = await axios.post(`${ASAAS_URL}/subscriptions`, {
+        customer: customerId, billingType: "UNDEFINED", value: 15.90, nextDueDate: nextDueDate,
+        cycle: "MONTHLY", description: "Assinatura Store Connect (7 Dias Grátis)", externalReference: userId
+    }, { headers });
+    const subscriptionId = subResponse.data.id;
 
-    console.log(`Assinatura ${subscriptionId} criada. Buscando link...`);
-
-    // C. BUSCA O LINK (Estratégia Híbrida)
+    // 3. BUSCA O LINK DO BOLETO (AGORA É OBRIGATÓRIO ESPERAR PARA SALVAR)
     let finalPaymentLink = null;
-    
-    for (let i = 1; i <= 40; i++) {
+    // Tenta buscar o link por até 10 segundos
+    for (let i = 1; i <= 10; i++) {
         try {
-            let foundPayment = null;
-
-            // Tenta Assinatura
-            const subSearch = await axios.get(
-                `${ASAAS_URL}/payments?subscription=${subscriptionId}&limit=1`, 
-                { headers }
-            );
-            
+            const subSearch = await axios.get(`${ASAAS_URL}/payments?subscription=${subscriptionId}&limit=1`, { headers });
             if (subSearch.data.data && subSearch.data.data.length > 0) {
-                foundPayment = subSearch.data.data[0];
-            } 
-            // Tenta Cliente (Fallback rápido)
-            else {
-                const custSearch = await axios.get(
-                    `${ASAAS_URL}/payments?customer=${customerId}&status=PENDING&limit=1&sort=dateCreated&order=desc`, 
-                    { headers }
-                );
-                if (custSearch.data.data && custSearch.data.data.length > 0) {
-                    foundPayment = custSearch.data.data[0];
-                }
-            }
-
-            if (foundPayment) {
-                finalPaymentLink = foundPayment.billUrl || foundPayment.invoiceUrl;
-                console.log(`✅ Link encontrado na tentativa ${i}: ${finalPaymentLink}`);
+                finalPaymentLink = subSearch.data.data[0].billUrl || subSearch.data.data[0].invoiceUrl;
                 break; 
             }
-        } catch (e) {
-            console.warn(`Tentativa ${i} falhou...`);
-        }
-        await delay(1500); 
+        } catch (e) {}
+        await delay(1000); 
     }
 
-    if (!finalPaymentLink) {
-        throw new HttpsError("unavailable", "O Pix foi gerado, mas o sistema demorou para capturar o link. Verifique seu email.");
+    // 4. ATUALIZA FIREBASE (SALVANDO O LINK)
+    const db = admin.firestore();
+    const batch = db.batch();
+    const userRef = db.collection("users").doc(userId);
+    
+    // Atualiza User
+    batch.update(userRef, { 
+        subscriptionStatus: "active",
+        trialEndsAt: admin.firestore.Timestamp.fromDate(trialDate),
+        documentNumber: cpfCnpj, fullName: name, phone: phone
+    });
+
+    // Atualiza Loja (COM O LINK)
+    const userSnapshot = await userRef.get();
+    const userData = userSnapshot.data() || {};
+    let storeRef = null;
+    if (userData.storeId) {
+        storeRef = db.collection("stores").doc(userData.storeId);
+    } else {
+        const storeQuery = await db.collection("stores").where("ownerId", "==", userId).limit(1).get();
+        if (!storeQuery.empty) storeRef = storeQuery.docs[0].ref;
     }
 
-    return {
-      success: true,
-      paymentUrl: finalPaymentLink, 
-      subscriptionId: subscriptionId
-    };
+    if (storeRef) {
+        batch.update(storeRef, { 
+            subscriptionStatus: "active",
+            trialEndsAt: admin.firestore.Timestamp.fromDate(trialDate),
+            subscriptionId: subscriptionId,
+            paymentLink: finalPaymentLink // <--- SALVANDO O LINK AQUI
+        });
+    }
+    
+    await batch.commit();
+
+    return { success: true, paymentUrl: finalPaymentLink };
 
   } catch (error) {
     console.error("Erro Fatal:", error);
-    // Repassa o erro detalhado para o App Flutter
-    throw new HttpsError(error.code || "internal", error.message);
+    throw new HttpsError("internal", error.message);
   }
 });
 
-// --- 2. WEBHOOK ---
-// --- 2. WEBHOOK (Versão Final: Sincronia Total) ---
+// --- 2. WEBHOOK (INFALÍVEL: Usa storeId do Usuário) ---
 exports.asaasWebhook = onRequest(async (req, res) => {
     if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
 
@@ -159,18 +126,29 @@ exports.asaasWebhook = onRequest(async (req, res) => {
     try {
         const db = admin.firestore();
         
-        // 1. Busca as referências
-        // Tenta achar a LOJA pelo dono
-        const storeQuery = await db.collection("stores").where("ownerId", "==", userId).limit(1).get();
+        // 1. Busca o Usuário PRIMEIRO para pegar o storeId correto
         const userRef = db.collection("users").doc(userId);
+        const userSnapshot = await userRef.get();
 
-        let storeRef = null;
-        if (!storeQuery.empty) {
-            storeRef = storeQuery.docs[0].ref;
-            console.log(`✅ Loja encontrada: ${storeRef.id}`);
+        if (!userSnapshot.exists) {
+            console.log("Usuário não encontrado.");
+            return res.json({ received: true });
         }
 
-        // 2. Define o novo status
+        const userData = userSnapshot.data();
+        const storeId = userData.storeId; // <--- O SEGREDO ESTÁ AQUI!
+
+        let storeRef = null;
+        if (storeId) {
+            storeRef = db.collection("stores").doc(storeId);
+            console.log(`✅ Loja identificada pelo ID no usuário: ${storeId}`);
+        } else {
+             // Fallback antigo (caso não tenha storeId no user)
+             const storeQuery = await db.collection("stores").where("ownerId", "==", userId).limit(1).get();
+             if (!storeQuery.empty) storeRef = storeQuery.docs[0].ref;
+        }
+
+        // 2. Define Status
         let newStatus = null;
         if (event === "PAYMENT_CONFIRMED" || event === "PAYMENT_RECEIVED") {
             newStatus = "active";
@@ -178,17 +156,15 @@ exports.asaasWebhook = onRequest(async (req, res) => {
             newStatus = "inactive";
         }
 
-        // 3. Atualiza TUDO o que encontrar (Loja e Usuário)
+        // 3. Atualiza User e Loja
         if (newStatus) {
-            const batch = db.batch(); // O Batch faz tudo junto, com segurança
+            const batch = db.batch();
             
-            // Atualiza o Usuário
             batch.update(userRef, { 
                 subscriptionStatus: newStatus,
                 lastPaymentDate: admin.firestore.FieldValue.serverTimestamp()
             });
 
-            // Atualiza a Loja (se existir)
             if (storeRef) {
                 batch.update(storeRef, { 
                     subscriptionStatus: newStatus,
@@ -198,7 +174,7 @@ exports.asaasWebhook = onRequest(async (req, res) => {
             }
 
             await batch.commit();
-            console.log(`🚀 Status ${newStatus} aplicado para User e Loja.`);
+            console.log(`🚀 Sincronizado: User e Loja (${storeId}) viraram ${newStatus}`);
         }
         
         res.json({ received: true });
@@ -208,8 +184,9 @@ exports.asaasWebhook = onRequest(async (req, res) => {
     }
 });
 
-// --- 3. Limpeza ---
+// Mantém a função de limpeza
 exports.onProductDelete = onDocumentDeleted("stores/{storeId}/products/{productId}", async (event) => {
+    // ... (seu código de delete permanece igual) ...
     const deletedData = event.data && event.data.data();
     if (!deletedData) return;
     let imageRefValue = deletedData.imagePath ?? deletedData.imageUrl ?? null;
@@ -225,4 +202,93 @@ exports.onProductDelete = onDocumentDeleted("stores/{storeId}/products/{productI
         const file = bucket.file(filePath);
         if ((await file.exists())[0]) await file.delete();
     } catch (e) { console.error(e); }
+});
+
+// --- 2. WEBHOOK (O XERIFE AUTOMÁTICO) ---
+// Esta função recebe avisos do Asaas e atualiza o Firebase
+exports.handleAsaasWebhook = onRequest(async (req, res) => {
+    // 1. Segurança: Verifica se é um evento válido (opcional: validar token de acesso)
+    if (req.method !== "POST") {
+        return res.status(405).send("Method Not Allowed");
+    }
+
+    const event = req.body.event;
+    const payment = req.body.payment;
+    
+    // O externalReference é o ID do usuário que enviamos na hora de criar a assinatura
+    const userId = payment.externalReference;
+
+    console.log(`🔔 Webhook Recebido: ${event} para UserID: ${userId}`);
+
+    if (!userId) {
+        console.log("Ignorando evento sem externalReference (UserID).");
+        return res.json({ received: true });
+    }
+
+    // 2. Define o novo status baseado no evento do Asaas
+    let newStatus = null;
+    let updateFields = {};
+
+    switch (event) {
+        case "PAYMENT_CONFIRMED":
+        case "PAYMENT_RECEIVED":
+            // Pagou! Libera o acesso.
+            newStatus = "active";
+            updateFields = {
+                subscriptionStatus: "active",
+                lastPaymentDate: admin.firestore.Timestamp.now()
+            };
+            console.log(`✅ Pagamento confirmado! Liberando acesso para ${userId}`);
+            break;
+
+        case "PAYMENT_OVERDUE":
+            // Venceu e não pagou! Bloqueia.
+            newStatus = "inactive";
+            updateFields = {
+                subscriptionStatus: "inactive"
+            };
+            console.log(`⛔ Pagamento atrasado! Bloqueando acesso de ${userId}`);
+            break;
+
+        case "SUBSCRIPTION_DELETED":
+            // Cancelou a assinatura! Bloqueia.
+            newStatus = "canceled";
+            updateFields = {
+                subscriptionStatus: "canceled"
+            };
+            console.log(`❌ Assinatura cancelada para ${userId}`);
+            break;
+            
+        default:
+            console.log(`Evento ${event} ignorado.`);
+            return res.json({ received: true });
+    }
+
+    try {
+        const db = admin.firestore();
+        const batch = db.batch();
+
+        // 3. Atualiza a Coleção 'users'
+        const userRef = db.collection("users").doc(userId);
+        batch.set(userRef, updateFields, { merge: true });
+
+        // 4. Atualiza a Coleção 'stores' (Busca a loja desse dono)
+        const storesQuery = await db.collection("stores").where("ownerId", "==", userId).get();
+        
+        if (!storesQuery.empty) {
+            storesQuery.forEach(doc => {
+                batch.set(doc.ref, updateFields, { merge: true });
+            });
+        }
+
+        await batch.commit();
+        console.log("Banco de dados sincronizado com sucesso.");
+
+        // Responde para o Asaas que deu tudo certo
+        return res.json({ received: true });
+
+    } catch (error) {
+        console.error("Erro ao processar Webhook:", error);
+        return res.status(500).send("Erro interno");
+    }
 });
