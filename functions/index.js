@@ -144,6 +144,7 @@ exports.createAsaasSubscription = onCall({ timeoutSeconds: 120 }, async (request
 });
 
 // --- 2. WEBHOOK ---
+// --- 2. WEBHOOK (Versão Final: Sincronia Total) ---
 exports.asaasWebhook = onRequest(async (req, res) => {
     if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
 
@@ -151,24 +152,55 @@ exports.asaasWebhook = onRequest(async (req, res) => {
     const payment = req.body.payment || {};
     const userId = payment.externalReference || req.body.subscription?.externalReference;
 
-    console.log(`[Webhook] Evento: ${event} | User: ${userId}`);
+    console.log(`[Webhook] Evento: ${event} | User ID: ${userId}`);
 
     if (!userId) return res.json({ received: true }); 
 
     try {
         const db = admin.firestore();
-        const docRef = db.collection("stores").doc(userId); 
+        
+        // 1. Busca as referências
+        // Tenta achar a LOJA pelo dono
+        const storeQuery = await db.collection("stores").where("ownerId", "==", userId).limit(1).get();
+        const userRef = db.collection("users").doc(userId);
 
-        if (event === "PAYMENT_CONFIRMED" || event === "PAYMENT_RECEIVED") {
-            await docRef.update({
-                subscriptionStatus: "active",
-                lastPaymentDate: admin.firestore.FieldValue.serverTimestamp(),
-                subscriptionId: payment.subscription || null
-            });
-        } 
-        else if (event === "PAYMENT_OVERDUE" || event === "SUBSCRIPTION_DELETED") {
-            await docRef.update({ subscriptionStatus: "inactive" });
+        let storeRef = null;
+        if (!storeQuery.empty) {
+            storeRef = storeQuery.docs[0].ref;
+            console.log(`✅ Loja encontrada: ${storeRef.id}`);
         }
+
+        // 2. Define o novo status
+        let newStatus = null;
+        if (event === "PAYMENT_CONFIRMED" || event === "PAYMENT_RECEIVED") {
+            newStatus = "active";
+        } else if (event === "PAYMENT_OVERDUE" || event === "SUBSCRIPTION_DELETED") {
+            newStatus = "inactive";
+        }
+
+        // 3. Atualiza TUDO o que encontrar (Loja e Usuário)
+        if (newStatus) {
+            const batch = db.batch(); // O Batch faz tudo junto, com segurança
+            
+            // Atualiza o Usuário
+            batch.update(userRef, { 
+                subscriptionStatus: newStatus,
+                lastPaymentDate: admin.firestore.FieldValue.serverTimestamp()
+            });
+
+            // Atualiza a Loja (se existir)
+            if (storeRef) {
+                batch.update(storeRef, { 
+                    subscriptionStatus: newStatus,
+                    lastPaymentDate: admin.firestore.FieldValue.serverTimestamp(),
+                    subscriptionId: payment.subscription || null
+                });
+            }
+
+            await batch.commit();
+            console.log(`🚀 Status ${newStatus} aplicado para User e Loja.`);
+        }
+        
         res.json({ received: true });
     } catch (error) {
         console.error("Erro Webhook:", error);
