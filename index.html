@@ -106,12 +106,12 @@
           <li><a href="#pricing">Preços</a></li>
           <li><a href="#faq">F.A.Q</a></li>
           <li><a href="#contact">Contato</a></li>
-          <li class="d-xl-none"><a href="#" class="js-login-btn">🔐 Central do Assinante</a></li>
+          <li class="d-xl-none"><a href="#" class="js-login-btn">🔐 Entrar / Cadastrar</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="btn-login js-login-btn" href="#" id="openLoginBtn">Central do Assinante</a>
+      <a class="btn-login js-login-btn" href="#" id="openLoginBtn">Entrar</a>
 
       <a class="btn-getstarted js-login-btn" href="#">Teste Grátis</a>
     </div>
@@ -721,6 +721,7 @@
           <h4>Links úteis</h4>
           <ul>
             <li><i class="bi bi-chevron-right"></i> <a href="index.html">Home</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="/app/">🔐 Área do Cliente (Acesso Direto)</a></li>
             <li><i class="bi bi-chevron-right"></i> <a href="politica.html">Política de Privacidade</a></li>
             <li><i class="bi bi-chevron-right"></i> <a href="termos.html">Termos de serviço</a></li>
             <li><i class="bi bi-chevron-right"></i> <a href="exclusao_conta.html">Excluir Conta</a></li>
@@ -827,7 +828,7 @@
         <div class="badge">30</div>
         <div>
           <h3 id="modal-title" class="title">🎉 Comece agora com 7 dias grátis!</h3>
-          <p class="subtitle">Teste todas as funcionalidades sem pagar nada nos primeiros 7 dias.</p>
+          <p class="subtitle">Teste todas as funcionalidades sem pagar nada no primeiro mês.</p>
         </div>
       </div>
 
@@ -995,92 +996,110 @@
     </div>
   </div>
 
+  <div id="modalLogin" class="modal-overlay hidden" style="z-index: 10000;">
+    <div class="modal-card" style="max-width: 400px; margin: 0 auto; position: relative;">
+      <button id="closeLoginX" class="close-btn" style="color: #333; top: 15px; right: 15px;">✕</button>
+
+      <div id="loginView">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <img src="assets/img/icon2.png" alt="Logo" style="width: 60px;">
+          <h3 style="margin: 10px 0 5px; font-weight: 700;">Bem-vindo!</h3>
+          <p style="color: #666; font-size: 14px;">Acesse sua loja.</p>
+        </div>
+
+        <form id="formLoginApp">
+          <div class="mb-3">
+            <input type="email" class="form-control" id="loginEmail" placeholder="E-mail" required style="padding: 12px;">
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" id="loginPass" placeholder="Senha" required style="padding: 12px;">
+          </div>
+          <button type="submit" class="btn btn-primary w-100" style="padding: 12px; font-weight: bold; background: var(--accent); border:none;">ENTRAR</button>
+        </form>
+
+        <div class="text-center mt-3" style="font-size: 13px;">
+          Ainda não tem conta? <a href="#" id="linkToRegister" style="color: var(--accent); font-weight: bold;">Cadastre-se grátis</a>
+        </div>
+      </div>
+
+      <div id="registerView" class="hidden">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <img src="assets/img/icon2.png" alt="Logo" style="width: 60px;">
+          <h3 style="margin: 10px 0 5px; font-weight: 700;">Crie sua conta</h3>
+          <p style="color: #666; font-size: 14px;">Teste 7 dias grátis.</p>
+        </div>
+
+        <form id="formRegisterApp">
+          <div class="mb-3">
+            <input type="email" class="form-control" id="regEmail" placeholder="Seu melhor e-mail" required style="padding: 12px;">
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" id="regPass" placeholder="Crie uma senha forte" required style="padding: 12px;">
+          </div>
+          <button type="submit" class="btn btn-primary w-100" style="padding: 12px; font-weight: bold; background: var(--accent); border:none;">CRIAR CONTA</button>
+        </form>
+
+        <div class="text-center mt-3" style="font-size: 13px;">
+          Já tem conta? <a href="#" id="linkToLogin" style="color: var(--accent); font-weight: bold;">Fazer Login</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <script>
+    // Lógica Visual do Modal (Abrir/Fechar/Trocar Tela)
     (function(){
-      // Elementos do Login
-      const modalLogin = document.getElementById('modalLogin');
-      const btnClose = document.getElementById('closeLoginX');
+      const modal = document.getElementById('modalLogin');
+      const closeBtn = document.getElementById('closeLoginX');
+      const loginView = document.getElementById('loginView');
+      const registerView = document.getElementById('registerView');
       
-      // MUDANÇA: Seleciona TODOS os botões de login/teste (Desktop e Mobile) pela classe
-      // Adicionei a classe "js-login-btn" nos dois links no HTML
-      const loginButtons = document.querySelectorAll('.js-login-btn');
-
-      // Adiciona evento em todos os botões encontrados
-      loginButtons.forEach(btn => {
+      // Botões que abrem o modal
+      document.querySelectorAll('.js-login-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-          e.preventDefault(); 
-          
-          // Se tiver um href válido diferente de #, vai para o link
-          if(btn.getAttribute('href') !== '#' && btn.getAttribute('href')) {
-             window.location.href = btn.getAttribute('href');
-             return;
-          }
+          // Se for o link do footer (que tem href="/app/"), deixa navegar normal
+          if(btn.getAttribute('href') && btn.getAttribute('href') !== '#') return;
 
-          // Abre o modal
-          modalLogin.classList.remove('hidden');
-
-          // LÓGICA INTELIGENTE:
-          // Se o botão tiver texto de "Comprar", "Teste" ou "Assinar",
-          // já muda a visualização para CADASTRO automaticamente.
-          const text = btn.innerText.toLowerCase();
-          if(text.includes('teste') || text.includes('assinar') || text.includes('comprar') || text.includes('grátis')){
-              document.getElementById('loginView').classList.add('hidden');
-              document.getElementById('registerView').classList.remove('hidden');
-          } else {
-              // Se for "Login" ou "Central", mostra login
-              document.getElementById('registerView').classList.add('hidden');
-              document.getElementById('loginView').classList.remove('hidden');
-          }
-
-          // Fecha o menu mobile se estiver aberto (melhoria de UX)
-          if(document.querySelector('.mobile-nav-active')){
-            document.querySelector('body').classList.remove('mobile-nav-active');
-            const toggle = document.querySelector('.mobile-nav-toggle');
-            if(toggle) toggle.classList.toggle('bi-list');
-            if(toggle) toggle.classList.toggle('bi-x');
-          }
-        });
-      });
-
-      // Fechar Modal (X)
-      if(btnClose){
-        btnClose.addEventListener('click', () => {
-          modalLogin.classList.add('hidden');
-        });
-      }
-
-      // Fechar clicando fora
-      window.addEventListener('click', (e) => {
-        if (e.target === modalLogin) {
-          modalLogin.classList.add('hidden');
-        }
-      });
-      
-      const form = document.getElementById('loginForm');
-      if(form){
-        form.addEventListener('submit', (e) => {
           e.preventDefault();
-          // Lógica tratada no script do Firebase abaixo
-        });
-      }
+          modal.classList.remove('hidden');
 
+          // Se clicou em "Teste Grátis" ou "Cadastrar", abre direto no cadastro
+          const text = btn.innerText.toLowerCase();
+          if(text.includes('teste') || text.includes('grátis') || text.includes('cadastr')){
+            loginView.classList.add('hidden');
+            registerView.classList.remove('hidden');
+          } else {
+            loginView.classList.remove('hidden');
+            registerView.classList.add('hidden');
+          }
+        });
+      });
+
+      // Fechar
+      closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+      window.addEventListener('click', (e) => { if(e.target === modal) modal.classList.add('hidden'); });
+
+      // Troca entre Login e Cadastro
+      document.getElementById('linkToRegister').addEventListener('click', (e) => {
+        e.preventDefault();
+        loginView.classList.add('hidden');
+        registerView.classList.remove('hidden');
+      });
+      document.getElementById('linkToLogin').addEventListener('click', (e) => {
+        e.preventDefault();
+        registerView.classList.add('hidden');
+        loginView.classList.remove('hidden');
+      });
     })();
   </script>
 
-    <script type="module">
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { 
-      getAuth, 
-      signInWithPopup, 
-      GoogleAuthProvider, 
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword, // Importante para cadastro
-      onAuthStateChanged 
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    
-    // Importar Firestore para salvar o usuário novo
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+    // SUA CONFIGURAÇÃO
     const firebaseConfig = {
       apiKey: "AIzaSyAXvWxIcts2Nd8QW-prkD3rJHKxqMIyzUg",
       authDomain: "store-connect-app.firebaseapp.com",
@@ -1093,132 +1112,57 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app); // Inicializa o banco
-    const provider = new GoogleAuthProvider();
+    const db = getFirestore(app);
 
-    // --- LÓGICA DE INTERFACE (Trocar Login <-> Cadastro) ---
-    const loginView = document.getElementById('loginView');
-    const registerView = document.getElementById('registerView');
-    const linkToRegister = document.getElementById('linkToRegister');
-    const linkToLogin = document.getElementById('linkToLogin');
-
-    // Botão "Cadastre-se"
-    linkToRegister.addEventListener('click', () => {
-        loginView.classList.add('hidden');
-        registerView.classList.remove('hidden');
-    });
-
-    // Botão "Fazer Login"
-    linkToLogin.addEventListener('click', () => {
-        registerView.classList.add('hidden');
-        loginView.classList.remove('hidden');
-    });
-
-    // --- 1. LOGIN (Igual ao antigo, só mudou IDs) ---
-    const formLogin = document.getElementById('formLoginApp');
-    formLogin.addEventListener('submit', async (e) => {
+    // 1. LOGIN
+    document.getElementById('formLoginApp').addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('loginEmail').value;
         const pass = document.getElementById('loginPass').value;
-        const btn = formLogin.querySelector('button');
+        const btn = e.target.querySelector('button');
+        const originalText = btn.innerText;
 
         try {
             btn.innerText = "Entrando...";
             await signInWithEmailAndPassword(auth, email, pass);
-            window.location.href = "painel.html";
+            // SUCESSO! Redireciona para o Flutter Web
+            window.location.href = "/app/"; 
         } catch (error) {
             console.error(error);
-            
-            let msg = "Erro ao entrar.";
-
-            // TRADUÇÃO DOS ERROS NO SITE
-            switch (error.code) {
-                case 'auth/invalid-credential':
-                case 'auth/user-not-found':
-                case 'auth/wrong-password':
-                    msg = "E-mail ou senha incorretos.";
-                    break;
-                case 'auth/invalid-email':
-                    msg = "O formato do e-mail é inválido.";
-                    break;
-                case 'auth/user-disabled':
-                    msg = "Esta conta foi desativada.";
-                    break;
-                case 'auth/too-many-requests':
-                    msg = "Muitas tentativas falhas. Aguarde um pouco e tente novamente.";
-                    break;
-                default:
-                    msg = "Erro desconhecido: " + error.message;
-            }
-            
-            alert(msg);
-            btn.innerText = "ENTRAR";
+            alert("Erro ao entrar: Verifique e-mail e senha.");
+            btn.innerText = originalText;
         }
     });
 
-    // --- 2. CADASTRO (A novidade!) ---
-    const formRegister = document.getElementById('formRegisterApp');
-    formRegister.addEventListener('submit', async (e) => {
+    // 2. CADASTRO
+    document.getElementById('formRegisterApp').addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('regEmail').value;
         const pass = document.getElementById('regPass').value;
-        const btn = formRegister.querySelector('button');
+        const btn = e.target.querySelector('button');
+        const originalText = btn.innerText;
 
         try {
             btn.innerText = "Criando conta...";
-            
-            // 1. Cria no Authentication
             const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-            const user = userCredential.user;
-
-            // 2. Salva no Firestore (CRUCIAL para o pagamento funcionar depois)
-            await setDoc(doc(db, "users", user.uid), {
+            
+            // Cria o registro básico no Firestore
+            await setDoc(doc(db, "users", userCredential.user.uid), {
                 email: email,
                 createdAt: new Date(),
-                subscriptionStatus: "inactive" // Começa inativo até pagar
+                subscriptionStatus: "inactive"
             });
 
-            console.log("Conta criada com sucesso!");
-            // Redireciona para o painel (onde ele verá que precisa pagar)
-            window.location.href = "painel.html";
-
+            // SUCESSO! Redireciona para o Flutter Web
+            window.location.href = "/app/";
         } catch (error) {
             console.error(error);
-            let msg = "Erro ao criar conta.";
-            if(error.code === 'auth/email-already-in-use') msg = "Este e-mail já está cadastrado.";
-            if(error.code === 'auth/weak-password') msg = "A senha deve ter pelo menos 6 caracteres.";
+            let msg = "Erro ao cadastrar.";
+            if(error.code === 'auth/email-already-in-use') msg = "E-mail já cadastrado.";
+            if(error.code === 'auth/weak-password') msg = "Senha muito fraca.";
             alert(msg);
-            btn.innerText = "CRIAR CONTA";
+            btn.innerText = originalText;
         }
     });
-
-    // --- 3. GOOGLE LOGIN ---
-    const googleBtn = document.getElementById('googleLoginBtn');
-    if(googleBtn){
-        googleBtn.addEventListener('click', async () => {
-            try {
-                const result = await signInWithPopup(auth, provider);
-                // Se for novo usuário, o Firestore deveria ser criado também, 
-                // mas vamos assumir que o fluxo principal lida com isso depois ou usamos Cloud Functions
-                window.location.href = "painel.html";
-            } catch (error) {
-                alert("Erro Google: " + error.message);
-            }
-        });
-    }
-
-    // --- 4. VERIFICAÇÃO DE LOGIN ---
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const allLoginBtns = document.querySelectorAll('.js-login-btn');
-        allLoginBtns.forEach(btn => {
-          btn.innerText = "Central do Assinante";
-          btn.href = "painel.html";
-          // Se já estiver logado, o link vira direto, sem modal
-        });
-      }
-    });
   </script>
-
-  </body>
-</html>
+</body>
