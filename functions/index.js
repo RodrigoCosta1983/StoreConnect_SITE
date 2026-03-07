@@ -1,3 +1,12 @@
+/**
+ * 🔐 FIREBASE CLOUD FUNCTIONS - STORE CONNECT
+ *
+ * Este arquivo gerencia:
+ * 1. Criação de assinaturas (trial ou paga)
+ * 2. Webhook de confirmação de pagamento
+ * 3. Limpeza de produtos deletados
+ */
+
 const { onCall, onRequest, HttpsError } = require("firebase-functions/v2/https");
 const { onDocumentDeleted } = require("firebase-functions/v2/firestore");
 const admin = require('firebase-admin');
@@ -5,290 +14,343 @@ const axios = require("axios");
 
 admin.initializeApp();
 
-const ASAAS_URL = "https://www.asaas.com/api/v3";
-// Se for teste use: "https://sandbox.asaas.com/api/v3"
+const ASAAS_ENV = process.env.ASAAS_ENV || "sandbox";
+const ASAAS_URL = ASAAS_ENV === "production"
+  ? "https://www.asaas.com/api/v3"
+  : "https://sandbox.asaas.com/api/v3";
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-function cleanCpfCnpj(value) {
-    if (!value) return "";
-    return value.replace(/\D/g, '');
-}
+const SUBSCRIPTION_PRICES = {
+  pro: 15.90
+};
 
-// --- 1. FUNÇÃO DE CRIAR ASSINATURA (Versão V6 - Com Nome e Telefone) ---
+/**
+ * 🔵 FUNÇÃO PRINCIPAL: Cria ou retorna assinatura no Asaas
+ *
+ * Fluxo:
+ * 1. Novo cliente → ativa TRIAL de 7 dias (sem Asaas)
+ * 2. Cliente existente → cria assinatura PAGA no Asaas
+ * 3. Assinatura pendente → retorna link do boleto
+ *
+ * Status possíveis:
+ * - "trial" → teste gratuito ativo
+ * - "pending" → boleto gerado, aguardando pagamento
+ * - "active" → pagamento confirmado
+ * - "inactive" → assinatura cancelada/expirada
+ */
 exports.createAsaasSubscription = onCall({ timeoutSeconds: 120 }, async (request) => {
-  console.log(">>> INICIANDO ASSINATURA (TRIAL 7 DIAS - V7 - SAVE LINK) <<<");
-  const ASAAS_API_KEY = process.env.ASAAS_API_KEY; 
-  if (!request.auth) throw new HttpsError("unauthenticated", "Usuário não logado.");
+  console.log("\n\n╔════════════════════════════════════════════════════════════╗");
+  console.log("║  🟢 INICIANDO PROCESSO DE ASSINATURA                       ║");
+  console.log("╚════════════════════════════════════════════════════════════╝");
 
-  const cpfCnpj = cleanCpfCnpj(request.data.cpfCnpj);
-  const { name, email, phone } = request.data; 
-  
-  if (!cpfCnpj || cpfCnpj.length < 11) throw new HttpsError("invalid-argument", "CPF inválido.");
+  const ASAAS_API_KEY = process.env.ASAAS_API_KEY;
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "Usuário não logado.");
+  }
 
+  const { cpfCnpj, name, phone, email } = request.data;
   const userId = request.auth.uid;
-  const trialDate = new Date();
-  trialDate.setDate(trialDate.getDate() + 7);
-  const nextDueDate = trialDate.toISOString().split('T')[0];
-  const headers = { "access_token": ASAAS_API_KEY, "Content-Type": "application/json" };
-
-  const customerData = {
-    name: name, email: email, cpfCnpj: cpfCnpj, phone: phone, mobilePhone: phone, externalReference: userId
+  const headers = {
+    "access_token": ASAAS_API_KEY,
+    "Content-Type": "application/json"
   };
+  const db = admin.firestore();
 
   try {
-    // 1. Cliente Asaas
+    // ✅ PASSO 1: Valida se usuário tem loja
+    const userDoc = await db.collection("users").doc(userId).get();
+    if (!userDoc.exists || !userDoc.data().storeId) {
+      throw new HttpsError("not-found", "Nenhuma loja vinculada a este usuário.");
+    }
+    const storeId = userDoc.data().storeId;
+
+    // ✅ PASSO 2: Busca dados da loja (se houver assinatura anterior)
+    const storeRef = db.collection("stores").doc(storeId);
+    const storeDoc = await storeRef.get();
+    const existingSubscriptionId = storeDoc.data()?.asaasSubscriptionId;
+
+    console.log(`\n📌 User ID: ${userId}`);
+    console.log(`📌 Store ID: ${storeId}`);
+    console.log(`📌 CPF/CNPJ: ${cpfCnpj}`);
+    console.log(`📌 Assinatura Existente: ${existingSubscriptionId || "NÃO"}`);
+
+    // ✅ PASSO 3: Se há assinatura anterior, verifica status do pagamento
+    if (existingSubscriptionId) {
+      console.log("\n🔍 VERIFICANDO ASSINATURA EXISTENTE");
+
+      try {
+        const payments = await axios.get(
+          `${ASAAS_URL}/payments?subscription=${existingSubscriptionId}&limit=5`,
+          { headers }
+        );
+
+        if (payments.data.data && payments.data.data.length > 0) {
+          const payment = payments.data.data[0];
+
+          // ✅ Pagamento já foi confirmado
+          if (payment.status === "CONFIRMED" || payment.status === "RECEIVED") {
+            await storeRef.update({
+              subscriptionStatus: "active",
+              lastPaymentDate: admin.firestore.FieldValue.serverTimestamp()
+            });
+
+            return {
+              success: true,
+              alreadyActive: true,
+              message: "✅ Assinatura já está ativa!"
+            };
+          }
+
+          // ✅ Boleto ainda está pendente - retorna link
+          if (payment.status === "PENDING") {
+            const paymentLink = payment.billUrl || payment.invoiceUrl;
+
+            if (!paymentLink) {
+              const fallbackUrl = `https://www.asaas.com/checkout/${existingSubscriptionId}`;
+              return {
+                success: true,
+                paymentUrl: fallbackUrl,
+                subscriptionId: existingSubscriptionId,
+                alreadyExists: true
+              };
+            }
+            return {
+              success: true,
+              paymentUrl: paymentLink,
+              subscriptionId: existingSubscriptionId,
+              alreadyExists: true
+            };
+          }
+        }
+      } catch (axiosError) {
+        console.error(`❌ ERRO ao buscar pagamentos:`, axiosError.response?.data || axiosError.message);
+      }
+    }
+
+    // ✅ PASSO 4: Verifica se é novo cliente (para liberar trial)
+    const cpfRef = db.collection('cpfs_cadastrados').doc(cpfCnpj);
+    const cpfDoc = await cpfRef.get();
+    const ehNovoCliente = !cpfDoc.exists;
+
+    console.log(`\n📊 CPF Existe? ${cpfDoc.exists}`);
+    console.log(`📊 É novo cliente? ${ehNovoCliente}`);
+
+    // 🎁 PASSO 5: NOVO CLIENTE - Libera TRIAL de 7 dias (SEM ASAAS)
+    if (ehNovoCliente) {
+      const dataHoje = new Date();
+      const dataVencimento = new Date();
+      dataVencimento.setDate(dataHoje.getDate() + 7);
+      const trialEndDateStr = dataVencimento.toISOString().split('T')[0];
+
+      // ✅ Marca o CPF como cadastrado
+      await cpfRef.set({
+        uid: userId,
+        motivo: "Primeiro Teste 7 Dias",
+        data_cadastro: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      // ✅ ATUALIZA A LOJA com trial ativo
+      await storeRef.update({
+        subscriptionStatus: "active",  // ← IMPORTANTE: "active" permite acesso
+        subscriptionType: "trial",
+        trialEndDate: trialEndDateStr,
+        trialStartedAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
+      console.log(`✅ TRIAL DE 7 DIAS ATIVADO para loja ${storeId}`);
+      console.log(`   Vencimento: ${trialEndDateStr}`);
+
+      return {
+        success: true,
+        isTrial: true,
+        trialEndDate: trialEndDateStr,
+        message: "🎉 Aproveite seus 7 dias de teste!"
+      };
+    }
+
+    // 💳 PASSO 6: CLIENTE EXISTENTE - Cria assinatura PAGA
+    console.log("\n💳 CLIENTE EXISTENTE - CRIANDO ASSINATURA PAGA");
+
     let customerId;
     const search = await axios.get(`${ASAAS_URL}/customers?cpfCnpj=${cpfCnpj}`, { headers });
-    if (search.data.data && search.data.data.length > 0) {
-        customerId = search.data.data[0].id;
-        await axios.put(`${ASAAS_URL}/customers/${customerId}`, customerData, { headers });
+
+    if (search.data.data?.length > 0) {
+      customerId = search.data.data[0].id;
+      console.log(`✅ Cliente encontrado: ${customerId}`);
     } else {
-        const create = await axios.post(`${ASAAS_URL}/customers`, customerData, { headers });
-        customerId = create.data.id;
+      const create = await axios.post(`${ASAAS_URL}/customers`, {
+        name,
+        email,
+        cpfCnpj,
+        phone,
+        externalReference: storeId
+      }, { headers });
+      customerId = create.data.id;
+      console.log(`✅ Novo cliente criado: ${customerId}`);
     }
 
-    // 2. Assinatura
+    // ✅ Calcula data de vencimento (próximo mês)
+    const nextDueDate = new Date();
+    nextDueDate.setMonth(nextDueDate.getMonth() + 1);
+    const dueDateString = nextDueDate.toISOString().split('T')[0];
+
+    // ✅ Cria assinatura no Asaas
     const subResponse = await axios.post(`${ASAAS_URL}/subscriptions`, {
-        customer: customerId, billingType: "UNDEFINED", value: 15.90, nextDueDate: nextDueDate,
-        cycle: "MONTHLY", description: "Assinatura Store Connect (7 Dias Grátis)", externalReference: userId
+      customer: customerId,
+      billingType: "UNDEFINED",
+      value: SUBSCRIPTION_PRICES.pro,
+      nextDueDate: dueDateString,
+      cycle: "MONTHLY",
+      description: "Assinatura Store Connect Pro",
+      externalReference: storeId
     }, { headers });
+
     const subscriptionId = subResponse.data.id;
 
-    // 3. BUSCA O LINK DO BOLETO (AGORA É OBRIGATÓRIO ESPERAR PARA SALVAR)
+    // ✅ ATUALIZA A LOJA com status "pending"
+    await storeRef.set({
+      asaasSubscriptionId: subscriptionId,
+      asaasCustomerId: customerId,
+      subscriptionStatus: "pending",  // ← Boleto gerado, aguardando
+      subscriptionType: "pro",
+      nextDueDate: dueDateString
+    }, { merge: true });
+
+    console.log(`✅ Assinatura criada: ${subscriptionId}`);
+
+    // ✅ PASSO 7: Busca o link do boleto (com retry)
     let finalPaymentLink = null;
-    // Tenta buscar o link por até 10 segundos
-    for (let i = 1; i <= 10; i++) {
-        try {
-            const subSearch = await axios.get(`${ASAAS_URL}/payments?subscription=${subscriptionId}&limit=1`, { headers });
-            if (subSearch.data.data && subSearch.data.data.length > 0) {
-                finalPaymentLink = subSearch.data.data[0].billUrl || subSearch.data.data[0].invoiceUrl;
-                break; 
-            }
-        } catch (e) {}
-        await delay(1000); 
+    for (let i = 1; i <= 40; i++) {
+      const payments = await axios.get(`${ASAAS_URL}/payments?subscription=${subscriptionId}&limit=1`, { headers });
+      if (payments.data.data?.length > 0) {
+        finalPaymentLink = payments.data.data[0].billUrl || payments.data.data[0].invoiceUrl;
+        console.log(`✅ Boleto encontrado na tentativa ${i}`);
+        break;
+      }
+      await delay(1500);
     }
 
-    // 4. ATUALIZA FIREBASE (SALVANDO O LINK)
-    const db = admin.firestore();
-    const batch = db.batch();
-    const userRef = db.collection("users").doc(userId);
-    
-    // Atualiza User
-    batch.update(userRef, { 
-        subscriptionStatus: "active",
-        trialEndsAt: admin.firestore.Timestamp.fromDate(trialDate),
-        documentNumber: cpfCnpj, fullName: name, phone: phone
-    });
-
-    // Atualiza Loja (COM O LINK)
-    const userSnapshot = await userRef.get();
-    const userData = userSnapshot.data() || {};
-    let storeRef = null;
-    if (userData.storeId) {
-        storeRef = db.collection("stores").doc(userData.storeId);
-    } else {
-        const storeQuery = await db.collection("stores").where("ownerId", "==", userId).limit(1).get();
-        if (!storeQuery.empty) storeRef = storeQuery.docs[0].ref;
+    if (!finalPaymentLink) {
+      throw new HttpsError("unavailable", "Asaas demorou a gerar o link do boleto.");
     }
 
-    if (storeRef) {
-        batch.update(storeRef, { 
-            subscriptionStatus: "active",
-            trialEndsAt: admin.firestore.Timestamp.fromDate(trialDate),
-            subscriptionId: subscriptionId,
-            paymentLink: finalPaymentLink // <--- SALVANDO O LINK AQUI
-        });
-    }
-    
-    await batch.commit();
+    console.log(`✅ Boleto gerado com sucesso`);
 
-    return { success: true, paymentUrl: finalPaymentLink };
+    return {
+      success: true,
+      paymentUrl: finalPaymentLink,
+      subscriptionId: subscriptionId,
+      isTrial: false,
+      price: SUBSCRIPTION_PRICES.pro,
+      nextDueDate: dueDateString,
+      message: "📄 Boleto gerado com sucesso!"
+    };
 
   } catch (error) {
-    console.error("Erro Fatal:", error);
-    throw new HttpsError("internal", error.message);
+    console.error(`\n❌ Erro: ${error.message}`);
+    throw new HttpsError("internal", `Erro na assinatura: ${error.message}`);
   }
 });
 
-// --- 2. WEBHOOK (INFALÍVEL: Usa storeId do Usuário) ---
-exports.asaasWebhook = onRequest(async (req, res) => {
-    if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
+/**
+ * 🔔 WEBHOOK DO ASAAS
+ *
+ * Recebe notificações de mudanças de pagamento:
+ * - PAYMENT_CONFIRMED → ativa assinatura
+ * - PAYMENT_RECEIVED → ativa assinatura
+ * - PAYMENT_OVERDUE → desativa assinatura
+ * - SUBSCRIPTION_DELETED → desativa assinatura
+ */
 
-    const event = req.body.event;
-    const payment = req.body.payment || {};
-    const userId = payment.externalReference || req.body.subscription?.externalReference;
+ /**
+  * 🔔 WEBHOOK DO ASAAS
+  */
+ exports.asaasWebhook = onRequest(async (req, res) => {
+   console.log("\n\n╔════════════════════════════════════════════════════════════╗");
+   console.log("║  🔔 WEBHOOK ASAAS RECEBIDO                                ║");
+   console.log("╚════════════════════════════════════════════════════════════╝");
 
-    console.log(`[Webhook] Evento: ${event} | User ID: ${userId}`);
+   if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
 
-    if (!userId) return res.json({ received: true }); 
+   try {
+     // 🛡️ Prevenção caso o Asaas mande o body como String crua
+     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
-    try {
-        const db = admin.firestore();
-        
-        // 1. Busca o Usuário PRIMEIRO para pegar o storeId correto
-        const userRef = db.collection("users").doc(userId);
-        const userSnapshot = await userRef.get();
+     const event = body.event;
+     const payment = body.payment || {};
 
-        if (!userSnapshot.exists) {
-            console.log("Usuário não encontrado.");
-            return res.json({ received: true });
-        }
+     const asaasSubscriptionId = payment.subscription;
+     let targetId = payment.externalReference;
 
-        const userData = userSnapshot.data();
-        const storeId = userData.storeId; // <--- O SEGREDO ESTÁ AQUI!
+     console.log(`📌 Evento: ${event}`);
+     console.log(`📌 ID Assinatura: ${asaasSubscriptionId}`);
+     console.log(`📌 External Reference: ${targetId}`);
 
-        let storeRef = null;
-        if (storeId) {
-            storeRef = db.collection("stores").doc(storeId);
-            console.log(`✅ Loja identificada pelo ID no usuário: ${storeId}`);
-        } else {
-             // Fallback antigo (caso não tenha storeId no user)
-             const storeQuery = await db.collection("stores").where("ownerId", "==", userId).limit(1).get();
-             if (!storeQuery.empty) storeRef = storeQuery.docs[0].ref;
-        }
+     const db = admin.firestore();
+     let storeIdParaAtualizar = null;
 
-        // 2. Define Status
-        let newStatus = null;
-        if (event === "PAYMENT_CONFIRMED" || event === "PAYMENT_RECEIVED") {
-            newStatus = "active";
-        } else if (event === "PAYMENT_OVERDUE" || event === "SUBSCRIPTION_DELETED") {
-            newStatus = "inactive";
-        }
+     // 🔍 1ª Tentativa: Busca pelo ID da assinatura
+     if (asaasSubscriptionId) {
+         const snapshot = await db.collection("stores").where("asaasSubscriptionId", "==", asaasSubscriptionId).get();
+         if (!snapshot.empty) {
+             storeIdParaAtualizar = snapshot.docs[0].id;
+             console.log(`✅ Loja encontrada pela Assinatura: ${storeIdParaAtualizar}`);
+         }
+     }
 
-        // 3. Atualiza User e Loja
-        if (newStatus) {
-            const batch = db.batch();
-            
-            batch.update(userRef, { 
-                subscriptionStatus: newStatus,
-                lastPaymentDate: admin.firestore.FieldValue.serverTimestamp()
-            });
+     // 🔍 2ª Tentativa: Busca pela referência externa
+     if (!storeIdParaAtualizar && targetId) {
+         const userDoc = await db.collection("users").doc(targetId).get();
+         if (userDoc.exists && userDoc.data().storeId) {
+             storeIdParaAtualizar = userDoc.data().storeId;
+             console.log(`✅ Convertido de UID para StoreID: ${storeIdParaAtualizar}`);
+         } else {
+             storeIdParaAtualizar = targetId;
+             console.log(`✅ Usando targetId direto como StoreID: ${storeIdParaAtualizar}`);
+         }
+     }
 
-            if (storeRef) {
-                batch.update(storeRef, { 
-                    subscriptionStatus: newStatus,
-                    lastPaymentDate: admin.firestore.FieldValue.serverTimestamp(),
-                    subscriptionId: payment.subscription || null
-                });
-            }
+     if (!storeIdParaAtualizar) {
+         console.log(`⚠️ Nenhuma loja encontrada! Ignorando.`);
+         return res.json({ received: true, status: "ignored_no_store" });
+     }
 
-            await batch.commit();
-            console.log(`🚀 Sincronizado: User e Loja (${storeId}) viraram ${newStatus}`);
-        }
-        
-        res.json({ received: true });
-    } catch (error) {
-        console.error("Erro Webhook:", error);
-        res.status(500).send("Erro interno");
-    }
-});
+     const storeRef = db.collection("stores").doc(storeIdParaAtualizar);
+     const storeSnap = await storeRef.get();
 
-// Mantém a função de limpeza
+     if (!storeSnap.exists) {
+         console.log(`⚠️ O documento da loja ${storeIdParaAtualizar} não existe no Firestore.`);
+         return res.json({ received: true, status: "ignored_not_found" });
+     }
+
+     // 🔄 ATUALIZA O STATUS
+     if (event === "PAYMENT_CONFIRMED" || event === "PAYMENT_RECEIVED") {
+         await storeRef.update({
+             subscriptionStatus: "active",
+             lastPaymentDate: admin.firestore.FieldValue.serverTimestamp(),
+             subscriptionType: "pro"
+         });
+         console.log(`🎉 Sucesso! Loja ${storeIdParaAtualizar} ATIVADA.`);
+     }
+     else if (event === "PAYMENT_OVERDUE" || event === "SUBSCRIPTION_DELETED" || event === "PAYMENT_DELETED") {
+         await storeRef.update({ subscriptionStatus: "inactive" });
+         console.log(`🚫 Sucesso! Loja ${storeIdParaAtualizar} INATIVADA.`);
+     } else {
+         console.log(`ℹ️ Evento ${event} ignorado pois não afeta o status.`);
+     }
+
+     res.json({ received: true, updatedStore: storeIdParaAtualizar });
+
+   } catch (error) {
+     console.error(`❌ Erro crítico no webhook:`, error);
+     res.status(500).send("Erro interno");
+   }
+ });
+
+/**
+ * 🗑️ LIMPEZA: Quando um produto é deletado
+ */
 exports.onProductDelete = onDocumentDeleted("stores/{storeId}/products/{productId}", async (event) => {
-    // ... (seu código de delete permanece igual) ...
-    const deletedData = event.data && event.data.data();
-    if (!deletedData) return;
-    let imageRefValue = deletedData.imagePath ?? deletedData.imageUrl ?? null;
-    if (!imageRefValue) return;
-    try {
-        const bucket = admin.storage().bucket();
-        let filePath = String(imageRefValue);
-        if (filePath.startsWith('gs://')) filePath = filePath.replace(/^gs:\/\/[^\/]+\/?/, '');
-        else if (filePath.startsWith('http')) {
-            const m = filePath.match(/\/o\/([^?]+)/);
-            if (m) filePath = decodeURIComponent(m[1]);
-        }
-        const file = bucket.file(filePath);
-        if ((await file.exists())[0]) await file.delete();
-    } catch (e) { console.error(e); }
-});
-
-// --- 2. WEBHOOK (O XERIFE AUTOMÁTICO) ---
-// Esta função recebe avisos do Asaas e atualiza o Firebase
-exports.handleAsaasWebhook = onRequest(async (req, res) => {
-    // 1. Segurança: Verifica se é um evento válido (opcional: validar token de acesso)
-    if (req.method !== "POST") {
-        return res.status(405).send("Method Not Allowed");
-    }
-
-    const event = req.body.event;
-    const payment = req.body.payment;
-    
-    // O externalReference é o ID do usuário que enviamos na hora de criar a assinatura
-    const userId = payment.externalReference;
-
-    console.log(`🔔 Webhook Recebido: ${event} para UserID: ${userId}`);
-
-    if (!userId) {
-        console.log("Ignorando evento sem externalReference (UserID).");
-        return res.json({ received: true });
-    }
-
-    // 2. Define o novo status baseado no evento do Asaas
-    let newStatus = null;
-    let updateFields = {};
-
-    switch (event) {
-        case "PAYMENT_CONFIRMED":
-        case "PAYMENT_RECEIVED":
-            // Pagou! Libera o acesso.
-            newStatus = "active";
-            updateFields = {
-                subscriptionStatus: "active",
-                lastPaymentDate: admin.firestore.Timestamp.now()
-            };
-            console.log(`✅ Pagamento confirmado! Liberando acesso para ${userId}`);
-            break;
-
-        case "PAYMENT_OVERDUE":
-            // Venceu e não pagou! Bloqueia.
-            newStatus = "inactive";
-            updateFields = {
-                subscriptionStatus: "inactive"
-            };
-            console.log(`⛔ Pagamento atrasado! Bloqueando acesso de ${userId}`);
-            break;
-
-        case "SUBSCRIPTION_DELETED":
-            // Cancelou a assinatura! Bloqueia.
-            newStatus = "canceled";
-            updateFields = {
-                subscriptionStatus: "canceled"
-            };
-            console.log(`❌ Assinatura cancelada para ${userId}`);
-            break;
-            
-        default:
-            console.log(`Evento ${event} ignorado.`);
-            return res.json({ received: true });
-    }
-
-    try {
-        const db = admin.firestore();
-        const batch = db.batch();
-
-        // 3. Atualiza a Coleção 'users'
-        const userRef = db.collection("users").doc(userId);
-        batch.set(userRef, updateFields, { merge: true });
-
-        // 4. Atualiza a Coleção 'stores' (Busca a loja desse dono)
-        const storesQuery = await db.collection("stores").where("ownerId", "==", userId).get();
-        
-        if (!storesQuery.empty) {
-            storesQuery.forEach(doc => {
-                batch.set(doc.ref, updateFields, { merge: true });
-            });
-        }
-
-        await batch.commit();
-        console.log("Banco de dados sincronizado com sucesso.");
-
-        // Responde para o Asaas que deu tudo certo
-        return res.json({ received: true });
-
-    } catch (error) {
-        console.error("Erro ao processar Webhook:", error);
-        return res.status(500).send("Erro interno");
-    }
+  console.log(`\n🗑️ Produto deletado: ${event.params.productId} da loja ${event.params.storeId}`);
 });
