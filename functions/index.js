@@ -11,6 +11,7 @@ const { onCall, onRequest, HttpsError } = require("firebase-functions/v2/https")
 const { onDocumentDeleted } = require("firebase-functions/v2/firestore");
 const admin = require('firebase-admin');
 const axios = require("axios");
+const functions = require("firebase-functions");
 
 admin.initializeApp();
 
@@ -353,4 +354,73 @@ exports.createAsaasSubscription = onCall({ timeoutSeconds: 120 }, async (request
  */
 exports.onProductDelete = onDocumentDeleted("stores/{storeId}/products/{productId}", async (event) => {
   console.log(`\n🗑️ Produto deletado: ${event.params.productId} da loja ${event.params.storeId}`);
+});
+
+
+
+/**
+ * --- FUNÇÃO PARA PEGAR O LINK DO PORTAL DO CLIENTE (ASAAS) ---
+ */
+exports.getAsaasPortalUrl = onCall(async (request) => {
+  // 1. Verificação de segurança (Sintaxe V2 usando request.auth)
+  if (!request.auth) {
+    throw new HttpsError(
+      "unauthenticated",
+      "O usuário deve estar logado."
+    );
+  }
+
+  // Na V2, os dados ficam dentro de request.data
+  const storeId = request.data.storeId;
+  if (!storeId) {
+    throw new HttpsError(
+      "invalid-argument",
+      "O ID da loja é obrigatório."
+    );
+  }
+
+  const ASAAS_API_KEY = process.env.ASAAS_API_KEY;
+
+  try {
+    const storeDoc = await admin.firestore().collection("stores").doc(storeId).get();
+    if (!storeDoc.exists) {
+      throw new HttpsError("not-found", "Loja não encontrada.");
+    }
+
+    const storeData = storeDoc.data();
+    const asaasCustomerId = storeData.asaasCustomerId;
+
+    if (!asaasCustomerId) {
+      throw new HttpsError(
+        "failed-precondition",
+        "Esta loja ainda não possui um cadastro financeiro."
+      );
+    }
+
+    const response = await axios.get(`${ASAAS_URL}/payments`, {
+      headers: {
+        "access_token": ASAAS_API_KEY,
+      },
+      params: {
+        customer: asaasCustomerId,
+        limit: 1
+      }
+    });
+
+    const payments = response.data.data;
+
+    if (!payments || payments.length === 0) {
+       throw new HttpsError(
+        "not-found",
+        "Nenhuma fatura encontrada para este cliente."
+      );
+    }
+
+    const invoiceUrl = payments[0].invoiceUrl;
+    return { portalUrl: invoiceUrl };
+
+  } catch (error) {
+    console.error("Erro ao buscar portal Asaas:", error);
+    throw new HttpsError("internal", "Erro ao conectar com o financeiro.");
+  }
 });
