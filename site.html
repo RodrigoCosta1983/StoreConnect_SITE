@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="PT-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Store&Connect: A clareza que seu negócio precisa para crescer. </title>
+  <meta name="description" content="Sistema de gestão para lojas e distribuidoras. Controle de estoque, vendas, clientes, vendas a prazo e relatórios em tempo real no celular.">
+  <meta name="keywords" content="gestão de loja, controle de estoque, vendas a prazo, PDV, aplicativo para lojistas, sistema de vendas">
+
+
+  <link href="assets/img/icon2.png" rel="icon">
+  <link href="assets/img/icon2.png" rel="apple-touch-icon">
+
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+
+  <link rel="icon" type="image/png" href="assets/img/icon2.png?v=2">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rodrigocosta1983.github.io/">
+  <meta property="og:title" content="Store&Connect">
+  <meta property="og:description" content="A clareza que seu negócio precisa.">
+  <meta property="og:image" content="https://github.com/RodrigoCosta1983/StoreConnect_SITE/blob/main/assets/img/icon2.png?raw=true">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Store&Connect">
+  <meta name="twitter:description" content="A clareza que seu negócio precisa.">
+  <meta name="twitter:image" content="https://github.com/RodrigoCosta1983/StoreConnect_SITE/blob/main/assets/img/icon2.png?raw=true">
+
+
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+  <link href="assets/css/main.css" rel="stylesheet">
+  
+  <style>
+    :root{
+      --bg: #0b1220;
+      --card: #ffffff;
+      --accent: #2f89fc; /* sua cor */
+      --muted: #6b7280;
+      --radius: 12px;
+      --shadow: 0 10px 30px rgba(11,18,32,0.45);
+      --maxw: 420px;
+    }
+
+    /* overlay */
+    .modal-overlay{
+      position: fixed; inset: 0; display: grid; place-items: center; z-index: 9999;
+      background: linear-gradient(180deg, rgba(2,6,23,0.48), rgba(2,6,23,0.72));
+      padding: 24px;
+      animation: fadeIn .18s ease;
+    }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    /* card */
+    .modal-card{ background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); width: 100%; max-width: var(--maxw); padding: 22px; box-sizing: border-box; }
+
+    .modal-head{ display:flex; gap:12px; align-items:center }
+    .badge{ width:44px; height:44px; border-radius:10px; background: linear-gradient(135deg,var(--accent), #1567d8); display:grid; place-items:center; color:white; font-weight:700 }
+    .title{ font-size:18px; font-weight:700; margin:0 }
+    .subtitle{ margin:4px 0 0; color:var(--muted); font-size:14px }
+
+    .modal-body{ margin-top:14px; color:#0b1220; font-size:15px; line-height:1.35 }
+
+    .cta-row{ display:flex; gap:10px; margin-top:18px }
+    .btn{ flex:1; display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 14px; border-radius:10px; font-weight:600; border:0; cursor:pointer; font-size:15px }
+    .btn-primary{ background:var(--accent); color:#fff }
+    .btn-ghost{ background:transparent; color:var(--muted); border:1px solid #eef2f7 }
+
+    .small-note{ margin-top:12px; font-size:13px; color:var(--muted); text-align:center }
+
+    /* close button */
+    .close-btn{ position:absolute; top:18px; right:18px; background:transparent; border:0; color:#fff; font-size:22px; cursor:pointer }
+
+    /* responsive */
+    @media (max-width:420px){ .modal-card{ padding:18px } .badge{ width:40px; height:40px; } }
+
+    /* hidden */
+    .hidden{ display:none }
+  </style>
+
+  </head>
+
+<body class="index-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center">
+
+     <a href="index.html" class="logo d-flex align-items-center me-auto">
+       <img src="assets/img/logo_header.png" alt="Store&Connect Logo">
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="#hero" class="active">Home</a></li>
+          <li><a href="#about">Sobre</a></li>
+          <li><a href="#features">Características</a></li>
+          <li><a href="#pricing">Preços</a></li>
+          <li><a href="#faq">F.A.Q</a></li>
+          <li><a href="#contact">Contato</a></li>
+          <li class="d-xl-none"><a href="https://app.storeconnect.com.br" class="js-login-btn">🔐 Entrar / Cadastrar</a></li>
+          </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+      <a class="btn-login" href="https://app.storeconnect.com.br">Entrar</a>
+
+      <a class="btn-getstarted" href="https://app.storeconnect.com.br/#/register">Teste Grátis</a>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <section id="hero" class="hero section">
+
+      <div class="container">
+        <div class="row gy-4">
+          <div class="col-lg-3 order-lg-last hero-img" data-aos="zoom-out" data-aos-delay="100">
+            <img src="assets/img/home2.png" class="img-fluid animated img-rounded" alt="">
+          </div>
+          <div class="col-lg-8  d-flex flex-column justify-content-center text-center text-md-start" data-aos="fade-in">
+            <h2>Gestão completa para lojas & distribuidoras</h2>
+            <p>PDV + estoque + clientes + relatórios em tempo real num só lugar</p>
+            <div class="d-flex mt-4 justify-content-center justify-content-md-start">
+              <a href="https://play.google.com/store/apps/details?id=com.storeeconnect.app" class="download-btn"><i class="bi bi-google-play"></i> <span>Google Play</span></a>
+              <a href="manutencao.html" class="download-btn"><i class="bi bi-apple"></i> <span>App Store</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section><section id="about" class="about section light-background">
+
+      <div id="about" class="container section-title" data-aos="fade-up">
+        
+        <h2>Sobre</h2>
+        <p>Menos planilhas, zero inadimplência.</p>
+      </div><div class="container">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
+            <p>
+              Gerenciar uma loja não deveria ser um quebra-cabeça. No entanto, muitos lojistas ainda se perdem entre planilhas complexas, anotações em cadernos e vários sistemas que não se conversam. Isso gera retrabalho, furos no estoque e, principalmente, perda de tempo e dinheiro. 
+              E sabemos que um dos maiores desafios é a gestão do tradicional "Venda a prazo". A confiança no cliente é importante, mas a falta de controle sobre as vendas a prazo pode levar à inadimplência e impactar diretamente o seu caixa. 
+              O Store&Connect foi projetado para eliminar essa complexidade e trazer segurança total para a sua gestão. Somos a plataforma tudo-em-um que centraliza suas operações e transforma seus dados em lucro. Com nosso app, você:
+            </p>
+            <ul>
+              <li><i class="bi bi-check2-circle"></i> <span>Acaba com a inadimplência: Saiba na hora quem está com pagamentos em atraso. O sistema identifica e organiza os clientes devedores, permitindo uma cobrança rápida, fácil e sem constrangimentos. Dê adeus ao caderninho e às perdas por esquecimento.</span></li>
+              <li><i class="bi bi-check2-circle"></i> <span>Descobre seus clientes de ouro: Nossos relatórios mostram quem são os clientes que mais compram, quais produtos eles preferem e com que frequência retornam. Use essa inteligência para criar promoções exclusivas e construir um relacionamento que fideliza de verdade.</span></li>
+              </ul>
+          </div>
+
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+            <p>O melhor de tudo é que esse controle financeiro está totalmente integrado à gestão de estoque, ao registro de vendas da loja física e online e a todas as outras funcionalidades essenciais para o seu dia a dia. 
+              Nosso propósito é transformar a gestão do seu varejo, tornando-a mais eficiente, segura e baseada em dados reais. Com o Store&Connect, você ganha a clareza para tomar as melhores decisões e a liberdade para focar no crescimento do seu negócio.</p>
+            <a href="https://play.google.com/store/apps/details?id=com.storeeconnect.app" class="read-more"><span>Experimente grátis por 7 dias</span><i class="bi bi-arrow-right"></i></a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><section id="features" class="features section">
+
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Características</h2>
+        <p><em>O que o Store&Connect oferece:</em></p>
+      </div><div class="container">
+
+        <div class="row gy-5">
+
+          <div class="col-xl-5 d-flex align-items-center" data-aos="fade-up" data-aos-delay="100">
+            <img src="assets/img/features.svg" class="img-fluid" alt="">
+          </div>
+
+          <div class="col-xl-7 d-flex" data-aos="fade-up" data-aos-delay="200">
+
+            <div class="row align-self-center gy-5">
+
+              <div class="col-md-6 icon-box">
+                <i class="">📦</i>
+                <div>
+                  <h4>Controle de Estoque em Tempo Real</h4>
+                  <p>Visualize status de produtos (normal, baixo, esgotado) com alertas automáticos.</p>
+                </div>
+              </div><div class="col-md-6 icon-box">
+                <i class="">💰</i>
+                <div>
+                  <h4>Venda Rápida / PDV</h4>
+                  <p>Interface responsiva para vendas rápidas com carrinho flexível.</p>
+                </div>
+              </div><div class="col-md-6 icon-box">
+                <i class="">🧾</i>
+                <div>
+                  <h4>Vendas a Prazo</h4>
+                  <p>Registre vendas a prazo para clientes cadastrados.</p>
+                </div>
+              </div><div class="col-md-6 icon-box">
+                <i class="">📊</i>
+                <div>
+                  <h4>Dashboard e Relatórios</h4>
+                  <p>KPIs em tempo real, relatórios por período, contas a receber, curva ABC etc.</p>
+                </div>
+              </div><div class="col-md-6 icon-box">
+                <i class="">🔒</i>
+                <div>
+                  <h4>Segurança & Perfil</h4>
+                  <p>Login seguro, autenticação, perfil, biometrias e controle de acesso.</p>
+                </div>
+              </div><div class="col-md-6 icon-box">
+                <i class="">💳</i>
+                <div>
+                  <h4>Integração & Monetização</h4>
+                  <p>Integrações com Google Play Billing, Asaas (web), validação de assinatura.</p>
+                </div>
+              </div></div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><section id="feature-details" class="feature-details section">
+
+      <div class="container">
+
+        <div class="row gy-4 align-items-center features-item">
+          <div class="col-md-4 d-flex align-items-center" data-aos="zoom-out" data-aos-delay="100">
+            <img src="assets/img/dashboard.png" class="img-fluid img-rounded"  alt="">
+          </div>
+          <div class="col-md-7" data-aos="fade-up" data-aos-delay="100">
+            <h3>📊 RELATÓRIOS QUE FAZEM SENTIDO</h3>
+            <p class="fst-italic">
+              Tomar decisões baseadas em 'achismo' é coisa do passado. Com o Store&Connect, você tem uma visão clara e precisa de tudo o que acontece na sua loja, permitindo que você aja com inteligência e segurança.
+            </p>
+            <ul>
+              <li><i class=""></i><span>✅ Controle a inadimplência com um clique: Saiba exatamente quais clientes estão com pagamentos em atraso e o valor devido. Facilite a cobrança e reduza a zero as perdas com vendas a prazo.</span></li>
+              <li><i class=""></i> <span>✅ Descubra seus produtos campeões: Veja quais itens são os mais vendidos e quais estão parados no estoque. Compre melhor, evite produtos encalhados e maximize seu lucro a cada venda.</span></li>
+              <li><i class=""></i> <span>✅ Identifique seus melhores clientes: Nossos relatórios mostram quem são os clientes que mais compram na sua loja. Crie ações de fidelidade e promoções direcionadas para quem realmente valoriza seu negócio.</span></li>
+              <li><i class=""></i> <span>✅ Visão financeira completa: Acompanhe seu faturamento diário, semanal e mensal com gráficos simples e intuitivos. Entenda seus picos de venda e planeje o futuro do seu caixa com confiança.</span></li>
+
+            </ul>
+          </div>
+        </div><div class="row gy-4 align-items-center features-item">
+          <div class="col-md-3 order-1 order-md-2 d-flex align-items-center" data-aos="zoom-out" data-aos-delay="200">
+            <img src="assets/img/estoque01.jpg" class="img-fluid img-rounded" alt="">
+
+            <img src="assets/img/estoque02.jpg" class="img-fluid img-rounded ms-3" alt="">
+          </div>
+          <div class="col-md-6 order-2 order-md-1" data-aos="fade-up" data-aos-delay="200">
+            <h3>Gerenciamento de estoque em tempo real</h3>
+            <p class="fst-italic">
+             Já perdeu uma venda porque um produto acabou e você não percebeu? Ou comprou um item que ficou encalhado na prateleira? O controle de estoque do Store&Connect foi projetado para eliminar esses problemas e dar a você total controle sobre seus produtos.
+            </p>
+            <p>
+              Cada venda que você registra no nosso sistema atualiza seu inventário instantaneamente.
+              Nosso painel intuitivo permite que você cadastre todos os seus produtos com foto, preço de custo, preço de venda e estoque mínimo.
+              Quando um item está acabando, o app te avisa, garantindo que você compre na hora certa e nunca mais perca uma oportunidade de vender.
+              Como você pode ver nas imagens, o sistema bloqueia a venda de produtos esgotados, evitando o constrangimento de não poder entregar o que o cliente pediu.
+            </p>
+          </div>
+        </div><div class="row gy-4 align-items-center features-item">
+          <div class="col-md-4 d-flex align-items-center" data-aos="zoom-out">
+            <img src="assets/img/relatorios.png" class="img-fluid img-rounded" alt="">
+          </div>
+          <div class="col-md-7" data-aos="fade-up">
+            <h3>Análises e Relatórios que Geram Lucro</h3>
+            <p>Gerenciar uma loja com base em 'achismos' é o caminho mais rápido para o prejuízo.
+              Nossos relatórios foram desenhados para dar a você respostas claras e visuais,
+              transformando os dados do seu dia a dia em decisões inteligentes que aumentam seu faturamento.</p>
+            <ul>
+              <li><i class=""></i> <span>➡️ Descubra seus Produtos de Ouro (Análise ABC):<br>
+                Saiba quais são os 20% de produtos que geram 80% do seu lucro.
+                Nosso relatório ABC classifica seu estoque automaticamente para que você foque seus esforços de compra e marketing nos itens que realmente fazem a
+                diferença no seu caixa.</span></li>
+              <li><i class=""></i><span>➡️ Controle Total do seu Contas a Receber (Venda a prazo):<br> 
+                Veja em tempo real o saldo devedor de cada cliente que compra a prazo. Tenha uma visão clara de quem está em dia e quem está em atraso, 
+                facilitando a cobrança e garantindo a saúde financeira da sua loja.</span></li>
+              <li><i class=""></i> <span>➡️ Nunca mais Perca uma Venda (Estoque Baixo):<br>
+                Receba listas automáticas de todos os produtos que atingiram o nível mínimo de estoque.
+                Antecipe suas compras, negocie melhor com fornecedores e garanta que seus itens mais vendidos estejam sempre na prateleira.</span>.</li>
+              <li><i class=""></i> <span>➡️ Acompanhe o Desempenho de Vendas:<br>
+                Analise seu faturamento por dia, semana, mês ou qualquer período que desejar. Entenda a sazonalidade do seu negócio,
+                compare resultados e planeje suas metas com base em dados concretos e confiáveis.</span>.</li>
+
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </section><section id="gallery" class="gallery section">
+
+      <div class="container section-title" data-aos="fade-up">
+        </div><div class="container-fluid" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="swiper init-swiper">
+          <script type="application/json" class="swiper-config">
+            {
+              "loop": true,
+              "speed": 600,
+              "autoplay": {
+                "delay": 5000
+              },
+              "slidesPerView": "auto",
+              "centeredSlides": true,
+              "pagination": {
+                "el": ".swiper-pagination",
+                "type": "bullets",
+                "clickable": true
+              },
+              "breakpoints": {
+                "320": {
+                  "slidesPerView": 1,
+                  "spaceBetween": 0
+                },
+                "768": {
+                  "slidesPerView": 3,
+                  "spaceBetween": 30
+                },
+                "992": {
+                  "slidesPerView": 5,
+                  "spaceBetween": 30
+                },
+                "1200": {
+                  "slidesPerView": 7,
+                  "spaceBetween": 30
+                }
+              }
+            }
+          </script>
+          <div class="swiper-wrapper align-items-center">
+            </div>
+          <div class="swiper-pagination"></div>
+        </div>
+
+      </div>
+
+    </section><section id="testimonials" class="testimonials section light-background">
+
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Depoimentos</h2>
+        <p>A satisfação do nosso cliente também é nossa</p>
+      </div><div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="swiper init-swiper">
+          <script type="application/json" class="swiper-config">
+            {
+              "loop": true,
+              "speed": 600,
+              "autoplay": {
+                "delay": 5000
+              },
+              "slidesPerView": "auto",
+              "pagination": {
+                "el": ".swiper-pagination",
+                "type": "bullets",
+                "clickable": true
+              },
+              "breakpoints": {
+                "320": {
+                  "slidesPerView": 1,
+                  "spaceBetween": 40
+                },
+                "1200": {
+                  "slidesPerView": 2,
+                  "spaceBetween": 20
+                }
+              }
+            }
+          </script>
+          <div class="swiper-wrapper">
+
+            <div class="swiper-slide">
+              <div class="testimonial-wrap">
+                <div class="testimonial-item">
+                  <img src="assets/img/testimonials/eduardo.jpg" class="testimonial-img" alt="">
+                  <h3>Eduardo Sacramento</h3>
+                  <div class="stars">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                  </div>
+                  <p>
+                    <i class="bi bi-quote quote-icon-left"></i>
+                    <span>"O controle de inadimplência salvou meu caixa! Antes, eu me perdia no caderninho dos clientes a prazo. Agora, com o Store&Connect, eu sei exatamente quem precisa pagar com um clique.
+                      Reduzi minhas perdas e a dor de cabeça da cobrança."</span>
+                    <i class="bi bi-quote quote-icon-right"></i>
+                  </p>
+                </div>
+              </div>
+            </div><div class="swiper-slide">
+              <div class="testimonial-wrap">
+                <div class="testimonial-item">
+                  <img src="assets/img/testimonials/yasmim.jpg" class="testimonial-img" alt="">
+                  <h3>Yasmim Arcenes</h3>
+                  <div class="stars">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                  </div>
+                  <p>
+                    <i class="bi bi-quote quote-icon-left"></i>
+                    <span>"Nunca mais perdi uma venda por falta de produto. O alerta de estoque mínimo do app é fantástico.
+                      Eu sei exatamente quando preciso comprar mais e evito deixar dinheiro parado com produto encalhado.
+                      Minha gestão ficou muito mais profissional."</span>
+                    <i class="bi bi-quote quote-icon-right"></i>
+                  </p>
+                </div>
+              </div>
+            </div><div class="swiper-slide">
+              <div class="testimonial-wrap">
+                <div class="testimonial-item">
+                  <img src="assets/img/testimonials/jeffer.jpg" class="testimonial-img" alt="">
+                  <h3>Jeffer Ribeiro</h3>
+                  <div class="stars">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                  </div>
+                  <p>
+                    <i class="bi bi-quote quote-icon-left"></i>
+                    <span>"Eu tinha medo de usar um aplicativo por achar complicado, mas o Store&Connect é super intuitivo.
+                      Os relatórios de vendas me mostraram quais linhas são as mais vendidas,
+                      e agora eu compro de forma muito mais inteligente. Recomendo demais!"</span>
+                    <i class="bi bi-quote quote-icon-right"></i>
+                  </p>
+                </div>
+              </div>
+            </div><div class="swiper-slide">
+              <div class="testimonial-wrap">
+                <div class="testimonial-item">
+                  <img src="assets/img/testimonials/jorge.jpg" class="testimonial-img" alt="">
+                  <h3>Jorge</h3>
+                  <div class="stars">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                  </div>
+                  <p>
+                    <i class="bi bi-quote quote-icon-left"></i>
+                    <span>“Antes eu controlava tudo no caderno e sempre dava confusão. Depois que comecei a usar o Store & Connect,
+                      nunca mais perdi conta de ninguém. Agora vejo tudo organizado no celular. Mudou meu dia a dia.”</span>
+                    <i class="bi bi-quote quote-icon-right"></i>
+                  </p>
+                </div>
+              </div>
+            </div><div class="swiper-slide">
+              <div class="testimonial-wrap">
+                <div class="testimonial-item">
+                  <img src="assets/img/testimonials/sheila.jpg" class="testimonial-img" alt="">
+                  <h3>Sheila Almeida</h3>
+                  <div class="stars">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                  </div>
+                  <p>
+                    <i class="bi bi-quote quote-icon-left"></i>
+                    <span>“Eu não tinha ideia de quanto vendia por dia. Somava tudo no final e dava muito trabalho.
+                      Com o dashboard do Store & Connect eu vejo tudo na hora: vendas, estoque, contas a receber e muito mais. Ficou muito mais fácil administrar meu negócio.”</span>
+                    <i class="bi bi-quote quote-icon-right"></i>
+                  </p>
+                </div>
+              </div>
+            </div></div>
+          <div class="swiper-pagination"></div>
+        </div>
+
+      </div>
+
+    </section><section id="pricing" class="pricing section">
+
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Planos simples e transparentes para o seu negócio.</h2>
+        <p>Comece gratuitamente por 7 dias. Sem compromisso e sem precisar de cartão de crédito.</p>
+      </div><div class="container">
+
+        <div class="row g-5 g-lg-0">
+
+          <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="100">
+            <div class="pricing-item">
+              <h3>Experimente Grátis</h3>
+              <h4><sup>R$</sup>0<span> / por 7 dias</span></h4>
+              <ul>
+                <li><i class=""></i> <span>✅ Acesso aos recursos do Plano Pro durante o teste</span></li>
+                <li><i class=""></i> <span>✅ Cadastro ilimitado de produtos</span></li>
+                <li><i class=""></i> <span>✅ Cadastro ilimitado de clientes</span></li>
+                <li><i class=""></i> <span>✅ Vendas, estoque, contas a receber e relatórios</span></li>
+                <li class=""><i class=""></i> <span>✅ Sem necessidade de cartão de crédito</span></li>
+              </ul>
+              <div class="text-center"><a href="https://app.storeconnect.com.br/#/register" class="buy-btn">Iniciar meu teste grátis</a></div>
+            </div>
+          </div><div class="col-lg-4 featured" data-aos="zoom-in" data-aos-delay="200">
+            <div class="pricing-item">
+              <h3>Plano Pro</h3>
+              <h4><sup>R$</sup>39,90<span> / <em>mês</em></span></h4>
+              <p><span>Gestão completa para o dia a dia da sua loja.</span></p>
+              <ul>
+                <li><i class=" "></i> <span>✅ PDV e controle de vendas</span></li>
+                <li><i class=" "></i> <span>✅ Gestão de estoque em tempo real</span></li>
+                <li><i class=" "></i> <span>✅ Clientes, vendas a prazo e parcelamentos</span></li>
+                <li><i class=" "></i> <span>✅ Próximos vencimentos e resumo de pagamento em PDF</span></li>
+                <li><i class=" "></i> <span>✅ Relatórios inteligentes e contas a receber</span></li>
+                <li><i class=" "></i> <span>✅ Suporte prioritário via WhatsApp</span></li>
+              </ul>
+              <div class="text-center">
+                  <a href="https://app.storeconnect.com.br" class="buy-btn">Assinar Plano Pro</a>
+                  <div class="mt-2" style="font-size: 13px; color: #fff;">
+                      Já é assinante? <a href="https://app.storeconnect.com.br" style="text-decoration: underline; color: #fff;">Fazer Login</a>
+                  </div>
+              </div>
+            </div>
+          </div><div class="col-lg-4" data-aos="zoom-in" data-aos-delay="300">
+            <div class="pricing-item">
+              <h3>Plano Business</h3>
+              <h4><sup>R$</sup>99,90<span> / <em>mês</em></span></h4>
+              <p><span>Gestão completa com recursos fiscais para uma operação mais profissional.</span></p>
+              <ul>
+                <li><i class=""></i> <span>✅ Tudo do Plano Pro</span></li>
+                <li><i class=""></i> <span>✅ Emissão de NFC-e</span></li>
+                <li><i class=""></i> <span>✅ Configuração fiscal da empresa</span></li>
+                <li><i class=""></i> <span>✅ Integração com Focus NFe</span></li>
+                <li><i class=""></i> <span>✅ Histórico de documentos fiscais</span></li>
+                <li><i class=""></i> <span>✅ Recursos Business e futuras evoluções do módulo fiscal</span></li>
+              </ul>
+              <div class="text-center">
+                <a href="https://app.storeconnect.com.br" class="buy-btn">Assinar Plano Business</a>
+                <div class="mt-2" style="font-size: 13px; color: #6c757d;">
+                  Já usa o Pro? Faça o upgrade pela área <strong>Minha Assinatura</strong>.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section><section id="faq" class="faq section light-background">
+
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Perguntas frequentes</h2>
+        <p> Tudo o que você precisa saber antes de começar, respondido de forma clara e direta.</p>
+      </div><div class="container">
+
+        <div class="row justify-content-center">
+
+          <div class="col-lg-9">
+
+            <div class="faq-container">
+
+              <div class="faq-item faq-active" data-aos="fade-up" data-aos-delay="200">
+                <i class="faq-icon bi bi-question-circle"></i>
+                <h3>O que é o Store&Connect, exatamente?</h3>
+                <div class="faq-content">
+                  <p>O Store&Connect é um aplicativo de gestão completo para o seu celular, criado para simplificar o dia a dia de lojistas. Com ele, você controla seu estoque,
+                    registra suas vendas, gerencia as vendas a prazo de forma segura e acessa relatórios inteligentes para tomar as melhores decisões para o seu negócio.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><div class="faq-item" data-aos="fade-up" data-aos-delay="300">
+                <i class="faq-icon bi bi-question-circle"></i>
+                <h3>Como funciona o teste grátis de 7 dias?</h3>
+                <div class="faq-content">
+                  <p>É muito simples! Durante 7 dias, você tem acesso a todas as funcionalidades do Store&Connect,
+                    sem nenhuma limitação. Nós não pedimos dados de cartão de crédito para o teste. Ao final do período,
+                    você receberá um aviso e poderá decidir se deseja assinar o Plano Pro para continuar usando.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><div class="faq-item" data-aos="fade-up" data-aos-delay="400">
+                <i class="faq-icon bi bi-question-circle"></i>
+                <h3>O que acontece com meus dados se eu não assinar após o teste?</h3>
+                <div class="faq-content">
+                  <p>Seus dados ficam salvos em segurança em sua conta por um período. Caso decida assinar mais tarde, todas as informações de produtos e vendas que você cadastrou estarão lá esperando por você.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><div class="faq-item" data-aos="fade-up" data-aos-delay="500">
+                <i class="faq-icon bi bi-question-circle"></i>
+                <h3>Preciso ter conhecimento técnico para usar o aplicativo?</h3>
+                <div class="faq-content">
+                  <p> Não! O Store&Connect foi desenhado para ser extremamente fácil e intuitivo.
+                    Se você sabe usar as redes sociais no seu celular, você saberá usar o Store&Connect.
+                    Nossa interface é limpa e direta ao ponto.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><div class="faq-item" data-aos="fade-up" data-aos-delay="600">
+                <i class="faq-icon bi bi-question-circle"></i>
+                <h3>Meus dados de vendas e clientes estão seguros?</h3>
+                <div class="faq-content">
+                  <p>Sim, a segurança é nossa prioridade máxima. Todas as suas informações são armazenadas em servidores seguros,
+                    com criptografia e backups automáticos. Seus dados são seus e ninguém mais tem acesso a eles.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><div class="faq-item" data-aos="fade-up" data-aos-delay="600">
+                <i class="faq-icon bi bi-question-circle"></i>
+                <h3>Preciso de um computador ou de algum equipamento especial?</h3>
+                <div class="faq-content">
+                  <p>Não, você só precisa do seu smartphone! O Store&Connect funciona em celulares Android e iOS,
+                    permitindo que você gerencie sua loja inteira na palma da mão, de onde estiver.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><div class="faq-item" data-aos="fade-up" data-aos-delay="600">
+                <i class="faq-icon bi bi-question-circle"></i>
+                <h3>Que tipo de suporte vocês oferecem?</h3>
+                <div class="faq-content">
+                  <p>Oferecemos suporte rápido via e-mail para todos os usuários.
+                    Para os assinantes do Plano Pro e Business, disponibilizamos um canal de suporte prioritário via WhatsApp,
+                    garantindo que suas dúvidas sejam resolvidas o mais rápido possível.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div></div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><section id="contact" class="contact section">
+
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Contato</h2>
+        <p>Seja para tirar uma dúvida, dar um feedback ou propor uma parceria, este é o seu canal direto conosco.</p>
+      </div><div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-6">
+
+            <div class="row gy-4">
+              <div class="col-md-6">
+                <div class="info-item" data-aos="fade" data-aos-delay="200">
+                  <i class="bi bi-geo-alt"></i>
+                  <h3>End:</h3>
+                  <p>Rio de Janeiro, RJ</p>
+                </div>
+              </div><div class="col-md-6">
+                <div class="info-item" data-aos="fade" data-aos-delay="300">
+                  <i class="bi bi-telephone"></i>
+                  <h3>WhatsApp</h3>
+                  <p>21-98505-0120</p>
+                  </div>
+              </div><div class="col-md-6">
+                <div class="info-item" data-aos="fade" data-aos-delay="400">
+                  <i class="bi bi-envelope"></i>
+                  <h3>Email:</h3>
+                  <p>
+                     
+                    <a href="mailto:contato@storeconnect.com.br?subject=Contato pelo site">
+                      contato@storeconnect.com.br
+                    </a>
+                  </p>
+                  
+                </div>
+              </div><div class="col-md-6">
+                <div class="info-item" data-aos="fade" data-aos-delay="500">
+                  <i class="bi bi-clock"></i>
+                  <h3>Funcionamento:</h3>
+                  <p>Segunda - Sexta</p>
+                  <p>9:00AM - 05:00PM</p>
+                </div>
+              </div></div>
+
+          </div>
+
+          <div class="col-lg-6">
+            <form action="https://formsubmit.co/contato@storeconnect.com.br" method="POST" class="email-form" data-aos="fade-up" data-aos-delay="200">
+  
+              <input type="hidden" name="_next" value="https://www.storeconnect.com.br/">
+              <input type="hidden" name="_captcha" value="false">
+              <input type="hidden" name="_subject" value="Novo contato via Site Store&Connect!">
+              <input type="hidden" name="_template" value="table">
+
+              <div class="row gy-4">
+
+                <div class="col-md-6">
+                  <input type="text" name="name" class="form-control" placeholder="Nome" required>
+                </div>
+
+                <div class="col-md-6 ">
+                  <input type="email" class="form-control" name="email" placeholder="E-mail" required>
+                </div>
+
+                <div class="col-12">
+                  <input type="text" class="form-control" name="subject" placeholder="Assunto" required>
+                </div>
+
+                <div class="col-12">
+                  <textarea class="form-control" name="message" rows="6" placeholder="Mensagem" required></textarea>
+                </div>
+
+                <div class="col-12 text-center">
+                  <button type="submit" class="btn btn-primary" style="background: var(--accent); border:0; padding: 10px 30px; border-radius: 50px; color: #fff; margin-top: 15px;">Enviar Mensagem</button>
+                </div>
+
+              </div>
+            </form>
+          </div></div>
+
+      </div>
+
+    </section></main>
+
+  <footer id="footer" class="footer">
+
+    <div class="footer-newsletter">
+      <div class="container">
+        <div class="row justify-content-center text-center">
+          <div class="col-lg-6">
+            <h4>Newsletter</h4>
+            <p>Assine nossa newsletter e receba as últimas novidades sobre nossos produtos e serviços!</p>
+            <form action="https://formsubmit.co/contato@storeconnect.com.br" method="POST">
+              <input type="hidden" name="_next" value="https://www.storeconnect.com.br/">
+              <input type="hidden" name="_subject" value="Nova Inscrição na Newsletter">
+              
+              <div class="newsletter-form">
+                <input type="email" name="email" placeholder="Seu melhor e-mail" required>
+                <input type="submit" value="Inscrever-se">
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container footer-top">
+      <div class="row gy-4">
+        <div class="col-lg-4 col-md-6 footer-about">
+          <a href="index.html" class="d-flex align-items-center">
+            <span class="sitename">Store&Connect</span>
+          </a>
+          <div class="footer-contact pt-3">
+            <p>Rio de Janeiro, RJ</p>
+            <p class="mt-3"><strong>WhatsApp:</strong> <span>21-98505-0120</span></p>
+            <p><strong>Email:</strong> <span>contato@storeconnect.com.br</span></p>
+          </div>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Links úteis</h4>
+          <ul>
+            <li><i class="bi bi-chevron-right"></i> <a href="index.html">Home</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="https://app.storeconnect.com.br">🔐 Área do Cliente (Acesso Direto)</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="politica.html">Política de Privacidade</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="termos.html">Termos de serviço</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="exclusao_conta.html">Excluir Conta</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Nossos Serviços</h4>
+          <ul>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Web Design</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Desenvolvimento Web</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="#">Desenvolvimento Mobile</a></li>
+            <li><i class="bi bi-chevron-right"></i> <a href="https://www.eritrium.com/br/index.html">ERP - CRM</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-4 col-md-12">
+          <h4>Siga-nos</h4>
+          <p>Nossas redes</p>
+          <div class="social-links d-flex">
+            <a href=""><i class="bi bi-twitter-x"></i></a>
+            <a href=""><i class="bi bi-facebook"></i></a>
+            <a href=""><i class="bi bi-instagram"></i></a>
+            <a href=""><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Store&Connect</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        Designed by <a href="https://storeconnect.com.br/">Store&Connect</a>
+      </div>
+    </div>
+
+  </footer>
+
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <div id="preloader"></div>
+
+
+  <script>
+    //var url = 'https://cdn.waplus.io/waplus-crm/settings/ossembed.js';
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = true;
+    //s.src = url;
+    s.src = 'assets/js/ossembed.js';
+    var options = {
+    "enabled": true,
+    "chatButtonSetting": {
+    "backgroundColor": "#16BE45",
+    //"ctaText": "Envie-nos uma mensagem",
+    "ctaText": "",
+    "borderRadius": "8",
+    "marginLeft": "20",
+    "marginBottom": "100",
+    "marginRight": "20",
+    "position": "right",
+    "textColor": "#ffffff",
+    "phoneNumber": "5521985050120",
+    "messageText": "👋🏻Olá",
+    "trackClick": true
+    },
+    "brandSetting": {
+    "brandName": "Store&Connect",
+    "brandSubTitle": "Respostas em até 1 dia  \"Store&Connect\"",
+    "headerTextColor": "#fff",
+    "brandImg": "https://rodrigocosta1983.github.io/StoreConnect_SITE/assets/img/apple-touch-icon.png",
+    "welcomeText": "Oi! Em que posso ajudar?",
+    "messageText": "Olá, gostaria de tirar algumas dúvidas ",
+    "backgroundColor": "#0a5f54",
+    "ctaText": "Start Chat",
+    "borderRadius": "20",
+    "autoShow": false,
+    "btnColor": "#16BE45",
+    "phoneNumber": "5521985050120",
+    "trackClick": true
+    }
+    }
+    s.onload = function() {
+    CreateWhatsappChatWidget(options);
+    };
+    var x = document.getElementsByTagName('script')[0];
+    x.parentNode.insertBefore(s, x);
+  </script>
+
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="assets/vendor/aos/aos.js"></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="assets/js/main.js"></script>
+
+  <div id="modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card" role="document">
+      <button id="closeX" class="close-btn" aria-label="Fechar">✕</button>
+      <div class="modal-head">
+        <div class="badge">30</div>
+        <div>
+          <h3 id="modal-title" class="title">🎉 Comece agora com 7 dias grátis!</h3>
+          <p class="subtitle">Teste os recursos do Plano Pro durante 7 dias sem pagar nada.</p>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        Use sem limites, explore todos os recursos e veja como o app pode facilitar seu dia a dia. <strong>Não precisa de compromisso — cancele quando quiser.</strong>
+
+        <div class="cta-row">
+          <button id="ctaPrimary" class="btn btn-primary">Começar teste grátis</button>
+          <button id="ctaSecondary" class="btn btn-ghost">Agora não</button>
+        </div>
+
+        <p class="small-note">Ao clicar em "Começar teste grátis" você concorda com nossos <a href="#" style="color:var(--accent); text-decoration:none">termos</a>.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const modal = document.getElementById('modal');
+      const cta = document.getElementById('ctaPrimary');
+      const cancel = document.getElementById('ctaSecondary');
+      const closeX = document.getElementById('closeX');
+
+      // Acessibilidade: foco
+      const focusable = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+      const firstFocusable = () => modal.querySelectorAll(focusable)[0];
+      const focusableEls = () => modal.querySelectorAll(focusable);
+
+      // Show modal only if user hasn't dismissed before
+      const DISMISS_KEY = 'trial-popup-dismissed-v1';
+      if(localStorage.getItem(DISMISS_KEY) === 'true'){
+        modal.classList.add('hidden');
+        return;
+      }
+
+      // Set initial focus
+      window.addEventListener('load', ()=> setTimeout(()=> firstFocusable().focus(), 3000));
+
+      // CTA: redireciona para página de cadastro / download
+      cta.addEventListener('click', ()=>{
+        // personalizado: altere a URL abaixo para a página de inscrição/loja
+        window.location.href = 'https://play.google.com/store/apps/details?id=com.storeeconnect.app';
+      });
+
+      // Cancel / Close: oculta e não mostrar de novo por 7 dias
+      function dismiss(){
+        modal.classList.add('hidden');
+        localStorage.setItem(DISMISS_KEY, 'true');
+        // opcional: para mostrar novamente depois de 7 dias, use:
+        // const until = Date.now() + 7*24*60*60*1000; localStorage.setItem(DISMISS_KEY, until);
+      }
+      cancel.addEventListener('click', dismiss);
+      closeX.addEventListener('click', dismiss);
+
+      // ESC para fechar
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape') dismiss();
+      });
+
+      // Clique fora para fechar
+      modal.addEventListener('click', (e)=>{
+        if(e.target === modal) dismiss();
+      });
+
+      // simples trap de foco dentro do modal
+      modal.addEventListener('keydown', (e)=>{
+        if(e.key !== 'Tab') return;
+        const nodes = Array.from(focusableEls());
+        if(nodes.length === 0) return;
+        const idx = nodes.indexOf(document.activeElement);
+        if(e.shiftKey && idx === 0){ nodes[nodes.length-1].focus(); e.preventDefault(); }
+        else if(!e.shiftKey && idx === nodes.length-1){ nodes[0].focus(); e.preventDefault(); }
+      });
+
+    })();
+  </script>
+
+  <div id="modalLogin" class="modal-overlay hidden" style="z-index: 10000;">
+    <div class="app-card">
+      <button id="closeLoginX" class="close-btn-app">✕</button>
+
+      <div id="loginView">
+        <img src="assets/img/icon2.png" alt="Logo" class="app-logo">
+        <h3 class="app-title">Bem-vindo de volta!</h3>
+        <p class="app-subtitle">Faça login para gerenciar seu negócio.</p>
+
+        <form id="formLoginApp">
+          <div class="app-input-group">
+            <label class="app-input-label">E-mail</label>
+            <div class="app-input-wrapper">
+              <i class="bi bi-envelope app-icon"></i>
+              <input type="email" class="app-input" id="loginEmail" placeholder="seu@email.com" required>
+            </div>
+          </div>
+
+          <div class="app-input-group">
+            <label class="app-input-label">Senha</label>
+            <div class="app-input-wrapper">
+              <i class="bi bi-lock app-icon"></i>
+              <input type="password" class="app-input" id="loginPass" placeholder="••••••••" required>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; font-size:13px;">
+            <label style="display:flex; align-items:center; gap:5px; color:#666;">
+              <input type="checkbox"> Lembrar dados
+            </label>
+            <a href="#" class="app-link" style="font-size:13px;">Esqueci a senha</a>
+          </div>
+
+          <button type="submit" class="btn-app-primary">ENTRAR</button>
+        </form>
+
+        <div style="display:flex; align-items:center; gap:10px; color:#ccc; font-size:12px;">
+          <div style="flex:1; height:1px; background:#eee;"></div>
+          ou
+          <div style="flex:1; height:1px; background:#eee;"></div>
+        </div>
+
+        <button type="button" class="btn-app-google" id="googleLoginBtn">
+            <svg width="18" height="18" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+            </svg>
+            Continuar com Google
+        </button>
+
+        <p class="app-footer-text">
+          Ainda não tem uma conta? <a id="linkToRegister" class="app-link">Cadastre-se</a>
+        </p>
+      </div>
+
+      <div id="registerView" class="hidden">
+        <img src="assets/img/icon2.png" alt="Logo" class="app-logo">
+        <h3 class="app-title">Crie sua conta</h3>
+        <p class="app-subtitle">Comece a gerenciar seu negócio hoje.</p>
+
+        <form id="formRegisterApp">
+          <div class="app-input-group">
+            <label class="app-input-label">E-mail</label>
+            <div class="app-input-wrapper">
+              <i class="bi bi-envelope app-icon"></i>
+              <input type="email" class="app-input" id="regEmail" placeholder="seu@email.com" required>
+            </div>
+          </div>
+
+          <div class="app-input-group">
+            <label class="app-input-label">Senha</label>
+            <div class="app-input-wrapper">
+              <i class="bi bi-lock app-icon"></i>
+              <input type="password" class="app-input" id="regPass" placeholder="Crie uma senha forte" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-app-primary">CRIAR CONTA</button>
+        </form>
+
+        <p class="app-footer-text">
+          Já tem uma conta? <a id="linkToLogin" class="app-link">Fazer Login</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="modalLogin" class="modal-overlay hidden" style="z-index: 10000;">
+    <div class="modal-card" style="max-width: 400px; margin: 0 auto; position: relative;">
+      <button id="closeLoginX" class="close-btn" style="color: #333; top: 15px; right: 15px;">✕</button>
+
+      <div id="loginView">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <img src="assets/img/icon2.png" alt="Logo" style="width: 60px;">
+          <h3 style="margin: 10px 0 5px; font-weight: 700;">Bem-vindo!</h3>
+          <p style="color: #666; font-size: 14px;">Acesse sua loja.</p>
+        </div>
+
+        <form id="formLoginApp">
+          <div class="mb-3">
+            <input type="email" class="form-control" id="loginEmail" placeholder="E-mail" required style="padding: 12px;">
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" id="loginPass" placeholder="Senha" required style="padding: 12px;">
+          </div>
+          <button type="submit" class="btn btn-primary w-100" style="padding: 12px; font-weight: bold; background: var(--accent); border:none;">ENTRAR</button>
+        </form>
+
+        <div class="text-center mt-3" style="font-size: 13px;">
+          Ainda não tem conta? <a href="#" id="linkToRegister" style="color: var(--accent); font-weight: bold;">Cadastre-se grátis</a>
+        </div>
+      </div>
+
+      <div id="registerView" class="hidden">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <img src="assets/img/icon2.png" alt="Logo" style="width: 60px;">
+          <h3 style="margin: 10px 0 5px; font-weight: 700;">Crie sua conta</h3>
+          <p style="color: #666; font-size: 14px;">Teste 7 dias grátis.</p>
+        </div>
+
+        <form id="formRegisterApp">
+          <div class="mb-3">
+            <input type="email" class="form-control" id="regEmail" placeholder="Seu melhor e-mail" required style="padding: 12px;">
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" id="regPass" placeholder="Crie uma senha forte" required style="padding: 12px;">
+          </div>
+          <button type="submit" class="btn btn-primary w-100" style="padding: 12px; font-weight: bold; background: var(--accent); border:none;">CRIAR CONTA</button>
+        </form>
+
+        <div class="text-center mt-3" style="font-size: 13px;">
+          Já tem conta? <a href="#" id="linkToLogin" style="color: var(--accent); font-weight: bold;">Fazer Login</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Lógica Visual do Modal (Abrir/Fechar/Trocar Tela)
+    (function(){
+      const modal = document.getElementById('modalLogin');
+      const closeBtn = document.getElementById('closeLoginX');
+      const loginView = document.getElementById('loginView');
+      const registerView = document.getElementById('registerView');
+      
+      // Botões que abrem o modal
+      document.querySelectorAll('.js-login-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          // Se for o link do footer (que tem href="https://app.storeconnect.com.br"), deixa navegar normal
+          if(btn.getAttribute('href') && btn.getAttribute('href') !== '#') return;
+
+          e.preventDefault();
+          modal.classList.remove('hidden');
+
+          // Se clicou em "Teste Grátis" ou "Cadastrar", abre direto no cadastro
+          const text = btn.innerText.toLowerCase();
+          if(text.includes('teste') || text.includes('grátis') || text.includes('cadastr')){
+            loginView.classList.add('hidden');
+            registerView.classList.remove('hidden');
+          } else {
+            loginView.classList.remove('hidden');
+            registerView.classList.add('hidden');
+          }
+        });
+      });
+
+      // Fechar
+      closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+      window.addEventListener('click', (e) => { if(e.target === modal) modal.classList.add('hidden'); });
+
+      // Troca entre Login e Cadastro
+      document.getElementById('linkToRegister').addEventListener('click', (e) => {
+        e.preventDefault();
+        loginView.classList.add('hidden');
+        registerView.classList.remove('hidden');
+      });
+      document.getElementById('linkToLogin').addEventListener('click', (e) => {
+        e.preventDefault();
+        registerView.classList.add('hidden');
+        loginView.classList.remove('hidden');
+      });
+    })();
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // SUA CONFIGURAÇÃO
+    const firebaseConfig = {
+      apiKey: "AIzaSyAXvWxIcts2Nd8QW-prkD3rJHKxqMIyzUg",
+      authDomain: "store-connect-app.firebaseapp.com",
+      projectId: "store-connect-app",
+      storageBucket: "store-connect-app.firebasestorage.app",
+      messagingSenderId: "294766590074",
+      appId: "1:294766590074:web:fbe25231b8ef11d8afe3c3",
+      measurementId: "G-KYVFYLZHSQ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // 1. LOGIN
+    document.getElementById('formLoginApp').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const pass = document.getElementById('loginPass').value;
+        const btn = e.target.querySelector('button');
+        const originalText = btn.innerText;
+
+        try {
+            btn.innerText = "Entrando...";
+            await signInWithEmailAndPassword(auth, email, pass);
+            // SUCESSO! Redireciona para o Flutter Web
+            window.location.href = "https://app.storeconnect.com.br"; 
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao entrar: Verifique e-mail e senha.");
+            btn.innerText = originalText;
+        }
+    });
+
+    // 2. CADASTRO
+    document.getElementById('formRegisterApp').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('regEmail').value;
+        const pass = document.getElementById('regPass').value;
+        const btn = e.target.querySelector('button');
+        const originalText = btn.innerText;
+
+        try {
+            btn.innerText = "Criando conta...";
+            const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+            
+            // Cria o registro básico no Firestore
+            await setDoc(doc(db, "users", userCredential.user.uid), {
+                email: email,
+                createdAt: new Date(),
+                subscriptionStatus: "inactive"
+            });
+
+            // SUCESSO! Redireciona para o Flutter Web
+            window.location.href = "https://app.storeconnect.com.br";
+        } catch (error) {
+            console.error(error);
+            let msg = "Erro ao cadastrar.";
+            if(error.code === 'auth/email-already-in-use') msg = "E-mail já cadastrado.";
+            if(error.code === 'auth/weak-password') msg = "Senha muito fraca.";
+            alert(msg);
+            btn.innerText = originalText;
+        }
+    });
+  </script>
+</body>
