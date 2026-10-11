@@ -1741,3 +1741,36 @@ section,
 .starter-section {
   /* Add your styles here */
 }
+
+/* V3 - apresentação comercial */
+    .hero-proof{display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; justify-content:flex-start}
+    .hero-proof span{font-size:13px; padding:8px 12px; border-radius:999px; background:rgba(47,137,252,.10); color:#1f5f9f; font-weight:600}
+    .section-kicker{display:inline-block; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); margin-bottom:8px}
+    .catalog-showcase{background:#fff; border:1px solid #eef2f7; border-radius:18px; box-shadow:0 14px 40px rgba(11,18,32,.08); overflow:hidden}
+    .catalog-topbar{padding:18px 20px; border-bottom:1px solid #eef2f7; display:flex; justify-content:space-between; align-items:center; gap:12px}
+    .catalog-topbar strong{font-size:18px}
+    .catalog-topbar small{color:var(--muted)}
+    .catalog-body{padding:20px}
+    .catalog-chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px}
+    .catalog-chip{padding:7px 10px; border-radius:999px; background:#f4f7fb; color:#445; font-size:12px; font-weight:600}
+    .catalog-products{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px}
+    .catalog-product{border:1px solid #eef2f7; border-radius:14px; padding:12px; background:#fff}
+    .catalog-product-placeholder{height:74px; border-radius:10px; background:linear-gradient(135deg,#eef4ff,#f7f9fc); display:grid; place-items:center; font-size:28px; margin-bottom:10px}
+    .catalog-product h5{font-size:14px; margin:0 0 4px}
+    .catalog-product p{font-size:12px; color:var(--muted); margin:0}
+    .catalog-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:20px}
+    .benefit-list{list-style:none; padding:0; margin:20px 0}
+    .benefit-list li{display:flex; gap:10px; align-items:flex-start; margin-bottom:14px}
+    .benefit-list .bi{color:var(--accent); font-size:18px; margin-top:2px}
+    .payment-card{background:#fff; border:1px solid #eef2f7; border-radius:18px; box-shadow:0 14px 40px rgba(11,18,32,.08); padding:20px}
+    .payment-row{display:flex; justify-content:space-between; gap:16px; padding:12px 0; border-bottom:1px solid #eef2f7; font-size:14px}
+    .payment-row:last-child{border-bottom:0}
+    .payment-status{display:inline-flex; align-items:center; padding:4px 9px; border-radius:999px; background:#fff7df; color:#8a6500; font-size:12px; font-weight:700}
+    .pix-box{margin-top:16px; border:1px dashed #cfd8e3; border-radius:14px; padding:16px; text-align:center; background:#fafcff}
+    .pix-box .bi{font-size:34px; color:var(--accent)}
+    .cta-demo{display:inline-flex; align-items:center; gap:8px; padding:12px 18px; border-radius:999px; background:var(--accent); color:#fff; font-weight:700; text-decoration:none}
+    .cta-demo:hover{color:#fff; opacity:.92}
+    @media (max-width: 767px){
+      .hero-proof{justify-content:center}
+      .catalog-products{grid-template-columns:1fr}
+    }
